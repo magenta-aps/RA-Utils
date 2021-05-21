@@ -4,9 +4,9 @@ SPDX-License-Identifier: MPL-2.0
 -->
 
 
-# RA Clients
+# RA Utils
 
-OS2mo/LoRa clients
+Various code utilities for OS2mo/LoRa
 
 ## Versioning
 This project uses [Semantic Versioning](https://semver.org/) with the following strategy:
