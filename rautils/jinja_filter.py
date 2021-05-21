@@ -17,6 +17,7 @@ try:
     from jinja2 import Template
 except ImportError:
     _has_jinja = False
+    Template = Any  # type: ignore
 
 
 def requires_jinja(func):
