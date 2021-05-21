@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# --------------------------------------------------------------------------------------
+# SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
+# SPDX-License-Identifier: MPL-2.0
+# --------------------------------------------------------------------------------------
 from functools import partial
 from unittest import TestCase
 
@@ -46,11 +51,12 @@ class LazyDictTests(TestCase):
 
     def test_lazy_evalulation_bare(self):
         """Test that LazyDict supports lazy evaluation using LazyEvalBare."""
-        lazy_dict = LazyDict({"exception_func": LazyEvalBare(exception_func)})
+        lazy_dict: LazyDict = LazyDict({"exception_func": LazyEvalBare(exception_func)})
         with self.assertRaises(ValueError):
             lazy_dict["exception_func"]
 
-        lazy_dict["identity_func1"] = LazyEvalBare(partial(lambda x: x, 2))
+        identity_lambda = lambda x: x  # noqa: E731
+        lazy_dict["identity_func1"] = LazyEvalBare(partial(identity_lambda, 2))
         self.assertEqual(lazy_dict["identity_func1"], 2)
         self.assertEqual(lazy_dict["identity_func1"], 2)
 

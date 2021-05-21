@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# --------------------------------------------------------------------------------------
+# SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
+# SPDX-License-Identifier: MPL-2.0
+# --------------------------------------------------------------------------------------
 from unittest import TestCase
 from unittest.mock import mock_open
 from unittest.mock import patch
@@ -26,4 +31,4 @@ class LoadSettingsTests(TestCase):
         """Test that load_settings propergates FileNotFound errors."""
         mock_file.side_effect = FileNotFoundError()
         with self.assertRaises(FileNotFoundError):
-            result1 = load_settings()
+            load_settings()

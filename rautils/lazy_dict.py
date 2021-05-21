@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# --------------------------------------------------------------------------------------
+# SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
+# SPDX-License-Identifier: MPL-2.0
+# --------------------------------------------------------------------------------------
 from collections.abc import Mapping
 from inspect import signature
 from typing import Any
@@ -63,12 +68,6 @@ def LazyEvalBare(cally: Callable, cache: bool = True) -> LazyEval:
         return cally()
 
     return LazyEval(inner, cache)
-
-    def __str__(self) -> str:
-        return "LazyEval" + str(self.cally)
-
-    def __repr__(self) -> str:
-        return "LazyEval" + repr(self.cally)
 
 
 class LazyDict(Mapping):

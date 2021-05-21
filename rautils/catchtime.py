@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# --------------------------------------------------------------------------------------
+# SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
+# SPDX-License-Identifier: MPL-2.0
+# --------------------------------------------------------------------------------------
 from contextlib import contextmanager
 from time import perf_counter
 from time import process_time
@@ -28,7 +33,10 @@ def catchtime(
     """
     real_start = perf_counter()
     process_start = process_time()
-    result_func = lambda: (perf_counter() - real_start, process_time() - process_start)
+
+    def result_func():
+        return (perf_counter() - real_start, process_time() - process_start)
+
     if include_process_time:
         yield result_func
     else:

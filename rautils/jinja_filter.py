@@ -1,5 +1,10 @@
-from functools import wraps
+#!/usr/bin/env python3
+# --------------------------------------------------------------------------------------
+# SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
+# SPDX-License-Identifier: MPL-2.0
+# --------------------------------------------------------------------------------------
 from functools import partial
+from functools import wraps
 from typing import Any
 from typing import Callable
 from typing import Dict
@@ -12,7 +17,6 @@ try:
     from jinja2 import Template
 except ImportError:
     _has_jinja = False
-    Template = Any
 
 
 def requires_jinja(func):
@@ -21,6 +25,7 @@ def requires_jinja(func):
         if not _has_jinja:
             raise ImportError("jinja2 is required for this function.")
         return func(*args, **kwargs)
+
     return wrapper
 
 

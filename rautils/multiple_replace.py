@@ -1,6 +1,11 @@
+#!/usr/bin/env python3
+# --------------------------------------------------------------------------------------
+# SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
+# SPDX-License-Identifier: MPL-2.0
+# --------------------------------------------------------------------------------------
 import re
-
-from more_itertools import unzip
+from typing import cast
+from typing import Iterator
 
 
 def multiple_replace_compile(replacement_dict):
@@ -21,7 +26,7 @@ def multiple_replace_compile(replacement_dict):
 
     # Make a regex pattern, which matches all (escaped) keys
     escaped_keys = map(re.escape, keys)
-    pattern = re.compile("|".join(escaped_keys))
+    pattern = re.compile("|".join(cast(Iterator[str], escaped_keys)))
 
     return pattern
 

@@ -1,5 +1,12 @@
+#!/usr/bin/env python3
+# --------------------------------------------------------------------------------------
+# SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
+# SPDX-License-Identifier: MPL-2.0
+# --------------------------------------------------------------------------------------
 from datetime import timedelta
 from time import sleep
+from typing import cast
+from typing import Tuple
 from unittest import TestCase
 
 import hypothesis.strategies as st
@@ -18,7 +25,7 @@ class CatchtimeTests(TestCase):
         """Test that catchtime returns the expected time."""
         with catchtime() as t:
             sleep(sleep_time)
-        time_spent = t()
+        time_spent = cast(float, t())
 
         self.assertLess(time_spent - sleep_time, 0.01)
 
@@ -28,7 +35,7 @@ class CatchtimeTests(TestCase):
         """Test that catchtime returns the expected time and process time."""
         with catchtime(include_process_time=True) as t:
             sleep(sleep_time)
-        time_spent, process_time = t()
+        time_spent, process_time = cast(Tuple[float, float], t())
 
         self.assertLess(time_spent - sleep_time, 0.01)
         self.assertLess(process_time, time_spent - sleep_time)

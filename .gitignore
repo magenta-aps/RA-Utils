@@ -1,3 +1,4 @@
 # Cache
 .cache
+.hypothesis/
 __pycache__
