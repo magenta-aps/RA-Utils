@@ -3,7 +3,7 @@
 # SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
 # --------------------------------------------------------------------------------------
-from raclients import __version__
+from rautils import __version__
 
 
 def test_version():

@@ -1,7 +1,7 @@
 import warnings
 from unittest import TestCase
 
-from exporters.utils.deprecation import deprecated
+from rautils.deprecation import deprecated
 
 
 @deprecated

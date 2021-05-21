@@ -1,7 +1,28 @@
+from functools import wraps
 from functools import partial
-from typing import Any, Callable, Dict, Iterator, List, Tuple
+from typing import Any
+from typing import Callable
+from typing import Dict
+from typing import Iterator
+from typing import List
+from typing import Tuple
 
-from jinja2 import Template
+_has_jinja = True
+try:
+    from jinja2 import Template
+except ImportError:
+    _has_jinja = False
+    Template = Any
+
+
+def requires_jinja(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if not _has_jinja:
+            raise ImportError("jinja2 is required for this function.")
+        return func(*args, **kwargs)
+    return wrapper
+
 
 InnerFilterType = Callable[[List[str], List[Any]], bool]
 FilterType = Callable[[List[Any]], bool]
@@ -15,6 +36,7 @@ def string_to_bool(v: str) -> bool:
     return v.lower() in ("yes", "true", "1", "1.0")
 
 
+@requires_jinja
 def jinja_filter(
     template: Template, tuple_keys: List[str], tuple_values: List[Any]
 ) -> bool:
@@ -39,6 +61,7 @@ def jinja_filter(
     return string_to_bool(result)
 
 
+@requires_jinja
 def create_filter(
     jinja_string: str,
     tuple_keys: List[str],
@@ -58,6 +81,7 @@ def create_filter(
     return filter_function
 
 
+@requires_jinja
 def create_filters(
     jinja_strings: List[str],
     tuple_keys: List[str],

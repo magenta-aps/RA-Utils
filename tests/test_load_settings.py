@@ -1,7 +1,8 @@
 from unittest import TestCase
-from unittest.mock import mock_open, patch
+from unittest.mock import mock_open
+from unittest.mock import patch
 
-from exporters.utils.load_settings import load_settings
+from rautils.load_settings import load_settings
 
 
 class LoadSettingsTests(TestCase):

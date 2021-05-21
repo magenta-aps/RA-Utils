@@ -4,7 +4,7 @@ from unittest import TestCase
 import hypothesis.strategies as st
 from hypothesis import given
 
-from exporters.utils.apply import apply
+from rautils.apply import apply
 
 
 @apply

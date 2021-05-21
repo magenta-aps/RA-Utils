@@ -4,7 +4,10 @@ from unittest import TestCase
 import hypothesis.strategies as st
 from hypothesis import given
 
-from exporters.utils.lazy_dict import LazyDict, LazyEval, LazyEvalBare, LazyEvalDerived
+from rautils.lazy_dict import LazyDict
+from rautils.lazy_dict import LazyEval
+from rautils.lazy_dict import LazyEvalBare
+from rautils.lazy_dict import LazyEvalDerived
 
 
 def exception_func():

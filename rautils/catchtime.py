@@ -1,6 +1,10 @@
 from contextlib import contextmanager
-from time import perf_counter, process_time
-from typing import Callable, Iterator, Tuple, Union
+from time import perf_counter
+from time import process_time
+from typing import Callable
+from typing import Iterator
+from typing import Tuple
+from typing import Union
 
 
 @contextmanager

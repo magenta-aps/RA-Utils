@@ -1,6 +1,8 @@
 from functools import wraps
 from inspect import signature as func_signature
-from typing import Callable, Tuple, TypeVar
+from typing import Callable
+from typing import Tuple
+from typing import TypeVar
 
 CallableReturnType = TypeVar("CallableReturnType")
 

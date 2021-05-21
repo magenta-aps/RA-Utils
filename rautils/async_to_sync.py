@@ -1,6 +1,8 @@
 import asyncio
 from functools import wraps
-from typing import Awaitable, Callable, TypeVar
+from typing import Awaitable
+from typing import Callable
+from typing import TypeVar
 
 CallableReturnType = TypeVar("CallableReturnType")
 

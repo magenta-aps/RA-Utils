@@ -3,9 +3,10 @@ from time import sleep
 from unittest import TestCase
 
 import hypothesis.strategies as st
-from hypothesis import given, settings
+from hypothesis import given
+from hypothesis import settings
 
-from exporters.utils.catchtime import catchtime
+from rautils.catchtime import catchtime
 
 
 class CatchtimeTests(TestCase):

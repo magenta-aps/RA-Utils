@@ -1,9 +1,12 @@
+import pytest
 from typing import Tuple
 from unittest import TestCase
 
 from parameterized import parameterized
 
-from exporters.utils.jinja_filter import create_filter, string_to_bool
+from rautils.jinja_filter import create_filter
+from rautils.jinja_filter import string_to_bool
+from rautils.jinja_filter import _has_jinja
 
 
 class StringToBoolTests(TestCase):
@@ -72,6 +75,7 @@ class CreateFilterTests(TestCase):
             ["{{ 0.5 * 0 }}", False],
         ]
     )
+    @pytest.mark.skipif(_has_jinja == False, reason="jinja2 not installed")
     def test_create_filter_no_arguments(self, jinja_string: str, expected: bool):
         result = create_filter(jinja_string, [])([])
         self.assertEqual(result, expected)
@@ -87,6 +91,7 @@ class CreateFilterTests(TestCase):
             ["{{ inty * floaty }}", False],
         ]
     )
+    @pytest.mark.skipif(_has_jinja == False, reason="jinja2 not installed")
     def test_create_filter_numbers(self, jinja_string: str, expected: bool):
         result = create_filter(jinja_string, ["inty", "floaty"])([7, 3.14])
         self.assertEqual(result, expected)

@@ -1,6 +1,8 @@
 from collections.abc import Mapping
 from inspect import signature
-from typing import Any, Callable, Iterator
+from typing import Any
+from typing import Callable
+from typing import Iterator
 
 
 class LazyEval:
