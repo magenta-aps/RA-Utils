@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "rautils"
+name = "ra-utils"
 version = "0.1.0"
 description = "Utilities for OS2mo/LoRa"
 authors = ["Magenta <info@magenta.dk>"]
