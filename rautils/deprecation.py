@@ -5,9 +5,10 @@
 # --------------------------------------------------------------------------------------
 import warnings
 from functools import wraps
+from typing import Callable
 
 
-def deprecated(func):
+def deprecated(func: Callable):
     """Mark the decorated function as deprecated."""
 
     @wraps(func)
