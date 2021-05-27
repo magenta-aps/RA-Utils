@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 # --------------------------------------------------------------------------------------
 from functools import wraps
-from inspect import signature as func_signature
+from inspect import signature
 from typing import Callable
 from typing import Tuple
 from typing import TypeVar
@@ -12,9 +12,9 @@ from typing import TypeVar
 CallableReturnType = TypeVar("CallableReturnType")
 
 
-def has_self_arg(func):
+def has_self_arg(func: Callable):
     """Return True if the given function has a 'self' argument."""
-    args = list(func_signature(func).parameters)
+    args = list(signature(func).parameters)
     return args and args[0] in ("self", "cls")
 
 
