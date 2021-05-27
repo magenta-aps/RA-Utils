@@ -19,7 +19,7 @@ class LazyEval:
     def __init__(self, cally: Callable, cache: bool = True) -> None:
         """Initializer.
 
-        Note: If the callable needs arguments, these should be provided using before
+        Note: If the callable needs arguments, these should be provided before
               calling this initializer using functools.partial or similar.
               Alternatively arguments can be provided and fetched from the LazyDict
               itself, as this is provided during the __call__ method.
