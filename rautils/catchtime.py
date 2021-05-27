@@ -30,6 +30,16 @@ def catchtime(
         time_spent, process_time = t()
         print(time_spent)  # --> Prints 1.0...
         print(process_time)  # --> Prints 0.0...
+
+    Args:
+        include_process_time (bool):
+            Whether to include process-time or solely real-time in result.
+
+    Returns:
+        Callable: That takes no arguments and return either:
+            a single float: realtime, or
+            a tuple (real-time, process-time)
+            Depending on the provided argument.
     """
     real_start = perf_counter()
     process_start = process_time()
