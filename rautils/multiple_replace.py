@@ -22,7 +22,8 @@ def multiple_replace_compile(replacement_dict):
     """
     # Replacing empty string is a mess
     keys = replacement_dict.keys()
-    assert "" not in keys, "Cannot replace empty string"
+    if "" in keys:
+        raise ValueError("Cannot replace empty string")
 
     # Make a regex pattern, which matches all (escaped) keys
     escaped_keys = map(re.escape, keys)

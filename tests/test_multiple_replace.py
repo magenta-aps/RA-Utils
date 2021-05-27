@@ -24,7 +24,7 @@ class MultipleReplaceTests(TestCase):
     @given(st.text())
     def test_empty_string_replace(self, text):
         """Test that no replace array yields noop."""
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             multiple_replace({"": "spam"}, text)
 
     @given(st.text(), st.text(min_size=1), st.text())
