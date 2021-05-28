@@ -16,7 +16,7 @@ try:
     from pydantic import BaseModel
 except ImportError:
     _has_pydantic = False
-    BaseModel = object
+    BaseModel = object  # type: ignore
 
 
 # Regex from https://semver.org/

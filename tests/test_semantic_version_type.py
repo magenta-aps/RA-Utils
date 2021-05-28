@@ -8,7 +8,10 @@ from typing import Any
 
 import pytest
 
-from ra_utils.semantic_version_type import get_regex, SemanticVersion, SemanticVersionModel, _has_pydantic
+from ra_utils.semantic_version_type import _has_pydantic
+from ra_utils.semantic_version_type import get_regex
+from ra_utils.semantic_version_type import SemanticVersion
+from ra_utils.semantic_version_type import SemanticVersionModel
 
 
 @pytest.mark.parametrize(
@@ -87,7 +90,7 @@ from ra_utils.semantic_version_type import get_regex, SemanticVersion, SemanticV
         ("9.8.7+meta+meta", False),
         ("9.8.7-whatever+meta+meta", False),
         ("9.9.9----RC-SNAPSHOT.12.09.1------..12", False),
-    ]
+    ],
 )
 @pytest.mark.skipif(_has_pydantic is False, reason="pydantic not installed")
 def test_semantic_version_validity(version: str, valid: bool):
@@ -99,18 +102,18 @@ def test_semantic_version_validity(version: str, valid: bool):
     assert matches == valid
 
     # Check fieldtype
-    context_manager: Any = do_not_raise()
+    field_context_manager: Any = do_not_raise()
     if not valid:
-        context_manager = pytest.raises(ValueError)
+        field_context_manager = pytest.raises(ValueError)
 
-    with context_manager:
+    with field_context_manager:
         semantic_version = SemanticVersion()
         semantic_version.validate(version)
 
     # Check model
-    context_manager: Any = do_not_raise()
+    model_context_manager: Any = do_not_raise()
     if not valid:
-        context_manager = pytest.raises(ValidationError)
+        model_context_manager = pytest.raises(ValidationError)
 
-    with context_manager:
+    with model_context_manager:
         SemanticVersionModel(__root__=version)
