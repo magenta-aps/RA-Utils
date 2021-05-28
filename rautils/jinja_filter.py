@@ -10,6 +10,7 @@ from typing import Callable
 from typing import Dict
 from typing import Iterator
 from typing import List
+from typing import Optional
 from typing import Tuple
 
 _has_jinja = True
@@ -20,9 +21,9 @@ except ImportError:
     Template = Any  # type: ignore
 
 
-def requires_jinja(func):
+def requires_jinja(func: Callable) -> Callable:
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Optional[Any]) -> Any:
         if not _has_jinja:
             raise ImportError("jinja2 is required for this function.")
         return func(*args, **kwargs)

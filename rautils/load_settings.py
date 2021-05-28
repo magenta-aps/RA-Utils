@@ -6,10 +6,13 @@
 import json
 from functools import lru_cache
 from pathlib import Path
+from typing import Any
+from typing import cast
+from typing import Dict
 
 
 @lru_cache(maxsize=None)
-def load_settings():
+def load_settings() -> Dict[str, Any]:
     """Load settings file from settings/settings.json.
 
     This function is in-memory cached using lru_cache, such that the underlying file
@@ -26,7 +29,7 @@ def load_settings():
     cwd = Path().cwd().absolute()
     settings_path = cwd / "settings" / "settings.json"
     with open(str(settings_path), "r") as settings_file:
-        return json.load(settings_file)
+        return cast(Dict[str, Any], json.load(settings_file))
 
 
 if __name__ == "__main__":

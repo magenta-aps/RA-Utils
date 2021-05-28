@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------------------
 from functools import wraps
 from inspect import signature
+from typing import Any
 from typing import Callable
 from typing import Tuple
 from typing import TypeVar
@@ -12,10 +13,10 @@ from typing import TypeVar
 CallableReturnType = TypeVar("CallableReturnType")
 
 
-def has_self_arg(func: Callable):
+def has_self_arg(func: Callable) -> bool:
     """Return True if the given function has a 'self' argument."""
     args = list(signature(func).parameters)
-    return args and args[0] in ("self", "cls")
+    return bool(args) and args[0] in ("self", "cls")
 
 
 def apply(func: Callable[..., CallableReturnType]) -> Callable[..., CallableReturnType]:
@@ -39,7 +40,7 @@ def apply(func: Callable[..., CallableReturnType]) -> Callable[..., CallableRetu
     if has_self_arg(func):
 
         @wraps(func)
-        def wrapper(self, tup: Tuple) -> CallableReturnType:
+        def wrapper(self: Any, tup: Tuple) -> CallableReturnType:
             return func(self, *tup)
 
     else:

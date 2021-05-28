@@ -5,14 +5,16 @@
 # --------------------------------------------------------------------------------------
 import warnings
 from functools import wraps
+from typing import Any
 from typing import Callable
+from typing import Optional
 
 
-def deprecated(func: Callable):
+def deprecated(func: Callable) -> Callable:
     """Mark the decorated function as deprecated."""
 
     @wraps(func)
-    def new_func(*args, **kwargs):
+    def new_func(*args: Any, **kwargs: Optional[Any]) -> Any:
         warnings.warn(
             "Call to deprecated function {}.".format(func.__name__),
             category=DeprecationWarning,

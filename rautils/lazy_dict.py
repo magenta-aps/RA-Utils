@@ -8,6 +8,7 @@ from inspect import signature
 from typing import Any
 from typing import Callable
 from typing import Iterator
+from typing import Optional
 
 
 class LazyEval:
@@ -86,8 +87,8 @@ class LazyDict(Mapping):
         print(d['a'])  # --> Prints 5 immediately (cached)
     """
 
-    def __init__(self, *args, **kw) -> None:
-        self._raw_dict = dict(*args, **kw)
+    def __init__(self, *args: Any, **kwargs: Optional[Any]) -> None:
+        self._raw_dict = dict(*args, **kwargs)
 
     def __getitem__(self, key: Any) -> Any:
         """Implementation of evaluation of self[key].

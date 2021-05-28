@@ -44,7 +44,7 @@ def catchtime(
     real_start = perf_counter()
     process_start = process_time()
 
-    def result_func():
+    def result_func() -> Tuple[float, float]:
         return (perf_counter() - real_start, process_time() - process_start)
 
     if include_process_time:

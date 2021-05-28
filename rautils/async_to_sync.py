@@ -5,8 +5,10 @@
 # --------------------------------------------------------------------------------------
 import asyncio
 from functools import wraps
+from typing import Any
 from typing import Awaitable
 from typing import Callable
+from typing import Optional
 from typing import TypeVar
 
 CallableReturnType = TypeVar("CallableReturnType")
@@ -34,7 +36,7 @@ def async_to_sync(
     """
 
     @wraps(func)
-    def wrapper(*args, **kwargs) -> CallableReturnType:
+    def wrapper(*args: Any, **kwargs: Optional[Any]) -> CallableReturnType:
         return asyncio.run(func(*args, **kwargs))
 
     return wrapper

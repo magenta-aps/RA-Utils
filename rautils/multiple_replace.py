@@ -5,10 +5,12 @@
 # --------------------------------------------------------------------------------------
 import re
 from typing import cast
+from typing import Dict
 from typing import Iterator
+from typing import Pattern
 
 
-def multiple_replace_compile(replacement_dict):
+def multiple_replace_compile(replacement_dict: Dict[str, str]) -> Pattern:
     """Make a regex pattern for finding all keys in replacement dict.
 
     Calling this directly with multiple_replace_run allows one to generate the regex
@@ -26,13 +28,15 @@ def multiple_replace_compile(replacement_dict):
         raise ValueError("Cannot replace empty string")
 
     # Make a regex pattern, which matches all (escaped) keys
-    escaped_keys = map(re.escape, keys)
+    escaped_keys = map(re.escape, keys)  # type: ignore
     pattern = re.compile("|".join(cast(Iterator[str], escaped_keys)))
 
     return pattern
 
 
-def multiple_replace_run(pattern, replacement_dict, string):
+def multiple_replace_run(
+    pattern: Pattern, replacement_dict: Dict[str, str], string: str
+) -> str:
     """Run a a regex pattern to replace matches.
 
     Calling this directly with a regex from multiple_replace_compile allows one to
@@ -50,10 +54,12 @@ def multiple_replace_run(pattern, replacement_dict, string):
         Modified string, with all replacements made.
     """
     # For each match, replace found key with corresponding value
-    return pattern.sub(lambda x: replacement_dict.get(x.group(0), ""), string)
+    return cast(
+        str, pattern.sub(lambda x: replacement_dict.get(x.group(0), ""), string)
+    )
 
 
-def multiple_replace(replacement_dict, string):
+def multiple_replace(replacement_dict: Dict[str, str], string: str) -> str:
     """Make multiple replacements in string.
 
     Example:
