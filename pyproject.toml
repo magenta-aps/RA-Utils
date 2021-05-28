@@ -25,6 +25,11 @@ pre-commit = "^2.12.1"
 parameterized = "^0.8.1"
 hypothesis = "^6.13.1"
 
+[tool.poetry.extras]
+jinja = ["Jinja2"]
+pydantic = ["pydantic"]
+all = ["Jinja2", "pydantic"]
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

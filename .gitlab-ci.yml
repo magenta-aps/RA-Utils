@@ -25,7 +25,7 @@ stages:
     - pip install poetry
     - poetry --version
     - poetry config virtualenvs.in-project true
-    - poetry install -vv
+    - poetry install -vv --extras all
     - poetry run pre-commit install
 
 .lint-template: &lint
