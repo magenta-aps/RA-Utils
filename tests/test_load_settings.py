@@ -7,7 +7,7 @@ from unittest import TestCase
 from unittest.mock import mock_open
 from unittest.mock import patch
 
-from rautils.load_settings import load_settings
+from ra_utils.load_settings import load_settings
 
 
 class LoadSettingsTests(TestCase):

@@ -8,9 +8,9 @@ from unittest import TestCase
 import pytest
 from parameterized import parameterized
 
-from rautils.jinja_filter import _has_jinja
-from rautils.jinja_filter import create_filter
-from rautils.jinja_filter import string_to_bool
+from ra_utils.jinja_filter import _has_jinja
+from ra_utils.jinja_filter import create_filter
+from ra_utils.jinja_filter import string_to_bool
 
 
 class StringToBoolTests(TestCase):

@@ -6,7 +6,7 @@
 import warnings
 from unittest import TestCase
 
-from rautils.deprecation import deprecated
+from ra_utils.deprecation import deprecated
 
 
 @deprecated

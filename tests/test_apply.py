@@ -9,7 +9,7 @@ from unittest import TestCase
 import hypothesis.strategies as st
 from hypothesis import given
 
-from rautils.apply import apply
+from ra_utils.apply import apply
 
 
 @apply

@@ -12,7 +12,7 @@ from hypothesis import event
 from hypothesis import example
 from hypothesis import given
 
-from rautils.multiple_replace import multiple_replace
+from ra_utils.multiple_replace import multiple_replace
 
 
 class MultipleReplaceTests(TestCase):
