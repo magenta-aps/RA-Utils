@@ -13,6 +13,7 @@ keywords = ["os2mo", "lora"]
 python = "^3.8"
 more-itertools = "^8.8.0"
 Jinja2 = {version = "^3.0.1", optional = true}
+pydantic = {version = "^1.8.2", optional = true}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
