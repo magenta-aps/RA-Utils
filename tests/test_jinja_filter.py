@@ -10,6 +10,7 @@ from parameterized import parameterized
 
 from ra_utils.jinja_filter import _has_jinja
 from ra_utils.jinja_filter import create_filter
+from ra_utils.jinja_filter import create_filters
 from ra_utils.jinja_filter import string_to_bool
 
 
@@ -83,6 +84,10 @@ class CreateFilterTests(TestCase):
     def test_create_filter_no_arguments(self, jinja_string: str, expected: bool):
         result = create_filter(jinja_string, [])([])
         self.assertEqual(result, expected)
+        filters = create_filters([jinja_string], [])
+        assert len(filters) == 1
+        result = filters[0]([])
+        self.assertEqual(result, expected)
 
     @parameterized.expand(
         [
@@ -98,4 +103,8 @@ class CreateFilterTests(TestCase):
     @pytest.mark.skipif(_has_jinja is False, reason="jinja2 not installed")
     def test_create_filter_numbers(self, jinja_string: str, expected: bool):
         result = create_filter(jinja_string, ["inty", "floaty"])([7, 3.14])
+        self.assertEqual(result, expected)
+        filters = create_filters([jinja_string], ["inty", "floaty"])
+        assert len(filters) == 1
+        result = filters[0]([7, 3.14])
         self.assertEqual(result, expected)

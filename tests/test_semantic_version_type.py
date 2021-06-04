@@ -117,25 +117,22 @@ def test_semantic_version_hypothesis_negative(version: str, valid: bool):
 
 
 @pytest.mark.skipif(_has_pydantic is False, reason="pydantic not installed")
-@pytest.mark.parametrize(
-    "version",
-    [2, 2.1, {}, [], (), object, type(object)]
-)
+@pytest.mark.parametrize("version", [2, 2.1, {}, [], (), object, type(object)])
 def test_semantic_version_invalid_types(version):
     from pydantic import ValidationError
 
-    with pytest.raises(TypeError) as excinfo:
+    with pytest.raises(TypeError) as excinfo_1:
         regex = get_regex()
-        matches = bool(regex.match(version))
-    assert "expected string or bytes-like object" in str(excinfo)
+        regex.match(version)
+    assert "expected string or bytes-like object" in str(excinfo_1)
 
-    with pytest.raises(TypeError) as excinfo:
+    with pytest.raises(TypeError) as excinfo_2:
         SemanticVersion.validate(version)
-    assert "string required" in str(excinfo)
+    assert "string required" in str(excinfo_2)
 
-    with pytest.raises(ValidationError) as excinfo:
+    with pytest.raises(ValidationError) as excinfo_3:
         SemanticVersionModel(__root__=version)
-    assert "string required" in str(excinfo)
+    assert "string required" in str(excinfo_3)
 
 
 def _test_semantic_version(version: Any, valid: bool):
