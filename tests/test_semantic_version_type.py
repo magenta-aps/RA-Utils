@@ -116,7 +116,29 @@ def test_semantic_version_hypothesis_negative(version: str, valid: bool):
     _test_semantic_version(version, valid)
 
 
-def _test_semantic_version(version: str, valid: bool):
+@pytest.mark.skipif(_has_pydantic is False, reason="pydantic not installed")
+@pytest.mark.parametrize(
+    "version",
+    [2, 2.1, {}, [], (), object, type(object)]
+)
+def test_semantic_version_invalid_types(version):
+    from pydantic import ValidationError
+
+    with pytest.raises(TypeError) as excinfo:
+        regex = get_regex()
+        matches = bool(regex.match(version))
+    assert "expected string or bytes-like object" in str(excinfo)
+
+    with pytest.raises(TypeError) as excinfo:
+        SemanticVersion.validate(version)
+    assert "string required" in str(excinfo)
+
+    with pytest.raises(ValidationError) as excinfo:
+        SemanticVersionModel(__root__=version)
+    assert "string required" in str(excinfo)
+
+
+def _test_semantic_version(version: Any, valid: bool):
     from pydantic import ValidationError
 
     # Check regex itself
@@ -130,8 +152,11 @@ def _test_semantic_version(version: str, valid: bool):
         field_context_manager = pytest.raises(ValueError)
 
     with field_context_manager:
-        semantic_version = SemanticVersion()
-        semantic_version.validate(version)
+        semantic_version = SemanticVersion.validate(version)
+        assert version in str(semantic_version)
+        assert version in repr(semantic_version)
+        assert "SemanticVersion" not in str(semantic_version)
+        assert "SemanticVersion" in repr(semantic_version)
 
     # Check model
     model_context_manager: Any = do_not_raise()
@@ -139,4 +164,14 @@ def _test_semantic_version(version: str, valid: bool):
         model_context_manager = pytest.raises(ValidationError)
 
     with model_context_manager:
-        SemanticVersionModel(__root__=version)
+        semantic_version_model = SemanticVersionModel(__root__=version)
+        assert version in str(semantic_version_model)
+        assert version in repr(semantic_version_model)
+        assert "SemanticVersion" in str(semantic_version_model)
+        assert "SemanticVersion" in repr(semantic_version_model)
+
+    schema = SemanticVersionModel.schema()
+    assert schema["title"] == "SemanticVersionModel"
+    assert "P<major>0|[1-9]" in schema["pattern"]
+    assert "0.1.0" in schema["examples"]
+    assert schema["type"] == "string"

@@ -37,7 +37,7 @@ stages:
   <<: *install-deps
   needs: []
   stage: test
-  script: poetry run pytest
+  script: poetry run pytest tests/ --cov ra_utils/ --cov-fail-under=100
 
 .deploy-template: &deploy
   <<: *install-deps

@@ -16,7 +16,7 @@ from typing import Tuple
 _has_jinja = True
 try:
     from jinja2 import Template
-except ImportError:
+except ImportError:  # pragma: no cover
     _has_jinja = False
     Template = Any  # type: ignore
 
@@ -24,7 +24,7 @@ except ImportError:
 def requires_jinja(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Optional[Any]) -> Any:
-        if not _has_jinja:
+        if not _has_jinja:  # pragma: no cover
             raise ImportError("jinja2 is required for this function.")
         return func(*args, **kwargs)
 

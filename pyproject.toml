@@ -24,6 +24,7 @@ reorder-python-imports = "^2.5.0"
 pre-commit = "^2.12.1"
 parameterized = "^0.8.1"
 hypothesis = "^6.13.1"
+pytest-cov = "^2.12.1"
 
 [tool.poetry.extras]
 jinja = ["Jinja2"]

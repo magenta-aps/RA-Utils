@@ -44,6 +44,7 @@ class LazyDictTests(TestCase):
 
         self.assertEqual(dicty.items(), lazy_dict.items())
         self.assertEqual(len(dicty), len(lazy_dict))
+        self.assertEqual(str(dicty), str(lazy_dict))
         self.assertEqual(repr(dicty), repr(lazy_dict))
 
         for key in dicty.keys():

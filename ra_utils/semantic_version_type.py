@@ -14,7 +14,7 @@ from typing import Pattern
 _has_pydantic = True
 try:
     from pydantic import BaseModel
-except ImportError:
+except ImportError:  # pragma: no cover
     _has_pydantic = False
     BaseModel = object  # type: ignore
 

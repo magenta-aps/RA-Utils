@@ -30,7 +30,3 @@ def load_settings() -> Dict[str, Any]:
     settings_path = cwd / "settings" / "settings.json"
     with open(str(settings_path), "r") as settings_file:
         return cast(Dict[str, Any], json.load(settings_file))
-
-
-if __name__ == "__main__":
-    print(json.dumps(load_settings(), indent=4))
