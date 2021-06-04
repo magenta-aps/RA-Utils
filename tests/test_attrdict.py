@@ -1,15 +1,21 @@
+#!/usr/bin/env python3
+# --------------------------------------------------------------------------------------
+# SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
+# SPDX-License-Identifier: MPL-2.0
+# --------------------------------------------------------------------------------------
 from operator import attrgetter
-from operator import itemgetter
-from operator import getitem
-from operator import setitem
 from operator import delitem
+from operator import getitem
+from operator import itemgetter
+from operator import setitem
 from typing import Any
 
 import hypothesis.strategies as st
+from hypothesis import assume
 from hypothesis import given
 
-from ra_utils.attrdict import AttrDict
 from .utils import any_strategy
+from ra_utils.attrdict import AttrDict
 
 
 def check_status_key(attr_dict: AttrDict, key: str, value: Any) -> None:
@@ -24,7 +30,7 @@ def check_status_key(attr_dict: AttrDict, key: str, value: Any) -> None:
 
 def check_status(attr_dict: AttrDict, value: Any) -> None:
     check_status_key(attr_dict, "status", value)
-    assert attr_dict.status == value
+    assert attr_dict.status == value  # type: ignore
 
 
 @given(value=any_strategy)
@@ -53,7 +59,7 @@ def test_setattr_static(value):
     check_status(attr_dict, value)
 
     attr_dict = AttrDict({})
-    attr_dict.status = value
+    attr_dict.status = value  # type: ignore
     check_status(attr_dict, value)
 
     attr_dict = AttrDict({})
@@ -66,7 +72,7 @@ def test_delattr_static(value):
     dicty = {"status": value}
     del dicty["status"]
     assert dicty == {}
-        
+
     attr_dict = AttrDict({"status": value})
     del attr_dict["status"]
     assert attr_dict == {}
@@ -76,7 +82,7 @@ def test_delattr_static(value):
     assert attr_dict == {}
 
     attr_dict = AttrDict({"status": value})
-    del attr_dict.status
+    del attr_dict.status  # type: ignore
     assert attr_dict == {}
 
     attr_dict = AttrDict({"status": value})
@@ -84,8 +90,10 @@ def test_delattr_static(value):
     assert attr_dict == {}
 
 
-@given(key=st.text(min_size=2), value=any_strategy)
-def test_getattr_static(key, value):
+@given(key=st.text(min_size=1), value=any_strategy)
+def test_getattr_dynamic(key, value):
+    assume("." not in key)
+
     dicty = {key: value}
     assert dicty[key] == value
     assert getitem(dicty, key) == value
@@ -95,8 +103,10 @@ def test_getattr_static(key, value):
     check_status_key(attr_dict, key, value)
 
 
-@given(key=st.text(min_size=2), value=any_strategy)
-def test_setattr_static(key, value):
+@given(key=st.text(min_size=1), value=any_strategy)
+def test_setattr_dynamic(key, value):
+    assume("." not in key)
+
     dicty = {}
     dicty[key] = value
     assert dicty[key] == value
@@ -114,12 +124,14 @@ def test_setattr_static(key, value):
     check_status_key(attr_dict, key, value)
 
 
-@given(key=st.text(min_size=2), value=any_strategy)
-def test_delattr_static(key, value):
+@given(key=st.text(min_size=1), value=any_strategy)
+def test_delattr_dynamic(key, value):
+    assume("." not in key)
+
     dicty = {key: value}
     del dicty[key]
     assert dicty == {}
-        
+
     attr_dict = AttrDict({key: value})
     del attr_dict[key]
     assert attr_dict == {}

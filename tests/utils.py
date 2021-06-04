@@ -1,9 +1,24 @@
+#!/usr/bin/env python3
+# --------------------------------------------------------------------------------------
+# SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
+# SPDX-License-Identifier: MPL-2.0
+# --------------------------------------------------------------------------------------
+from itertools import chain
+from typing import cast
+from typing import Sequence
+
 import hypothesis.strategies as st
+from hypothesis.strategies import SearchStrategy
 
-def deferred_hashable():
-    return st.one_of(*base_strategies, *recursive_strategies)
 
-base_strategies = [
+def deferred_hashable() -> SearchStrategy:
+    stategies: Sequence[SearchStrategy] = list(
+        chain(chain(base_strategies, recursive_strategies))
+    )
+    return cast(SearchStrategy, st.one_of(stategies))
+
+
+base_strategies: Sequence[SearchStrategy] = [
     st.binary(),
     st.booleans(),
     st.characters(),
@@ -25,15 +40,20 @@ base_strategies = [
     # st.timezones(),
     st.uuids(),
 ]
-non_hashable_strategies = [
+non_hashable_strategies: Sequence[SearchStrategy] = [
     st.slices(1),
-    st.dictionaries(keys=st.deferred(deferred_hashable), values=st.deferred(deferred_hashable)),
+    st.dictionaries(
+        keys=st.deferred(deferred_hashable), values=st.deferred(deferred_hashable)
+    ),
     st.lists(st.deferred(deferred_hashable)),
     st.sets(st.deferred(deferred_hashable)),
 ]
-recursive_strategies = [
+recursive_strategies: Sequence[SearchStrategy] = [
     st.frozensets(st.deferred(deferred_hashable)),
     st.iterables(st.deferred(deferred_hashable)),
     st.tuples(st.deferred(deferred_hashable)),
 ]
-any_strategy = st.one_of(*base_strategies, *recursive_strategies, *non_hashable_strategies)
+combined_strategies: Sequence[SearchStrategy] = list(
+    chain(base_strategies, recursive_strategies, non_hashable_strategies)
+)
+any_strategy: SearchStrategy = st.one_of(combined_strategies)
