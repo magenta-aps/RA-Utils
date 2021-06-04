@@ -6,7 +6,9 @@
 from contextlib import suppress as do_not_raise
 from typing import Any
 
+import hypothesis.strategies as st
 import pytest
+from hypothesis import given
 
 from ra_utils.semantic_version_type import _has_pydantic
 from ra_utils.semantic_version_type import get_regex
@@ -93,7 +95,28 @@ from ra_utils.semantic_version_type import SemanticVersionModel
     ],
 )
 @pytest.mark.skipif(_has_pydantic is False, reason="pydantic not installed")
-def test_semantic_version_validity(version: str, valid: bool):
+def test_semantic_version_fixtures(version: str, valid: bool):
+    _test_semantic_version(version, valid)
+
+
+@given(
+    version=st.from_regex(get_regex(), fullmatch=True), valid=st.sampled_from([True])
+)
+@pytest.mark.skipif(_has_pydantic is False, reason="pydantic not installed")
+def test_semantic_version_hypothesis_positive(version: str, valid: bool):
+    _test_semantic_version(version, valid)
+
+
+@given(
+    version=st.text().filter(lambda string: bool(get_regex().match(string)) is False),
+    valid=st.sampled_from([False]),
+)
+@pytest.mark.skipif(_has_pydantic is False, reason="pydantic not installed")
+def test_semantic_version_hypothesis_negative(version: str, valid: bool):
+    _test_semantic_version(version, valid)
+
+
+def _test_semantic_version(version: str, valid: bool):
     from pydantic import ValidationError
 
     # Check regex itself
