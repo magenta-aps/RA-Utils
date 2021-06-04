@@ -3,16 +3,38 @@
 # SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
 # --------------------------------------------------------------------------------------
+import random
 from functools import reduce
 from unittest import TestCase
+from difflib import SequenceMatcher
 
 import hypothesis.strategies as st
 from hypothesis import assume
 from hypothesis import event
 from hypothesis import example
 from hypothesis import given
+from hypothesis import target
 
 from ra_utils.multiple_replace import multiple_replace
+
+
+def similar(a: str, b: str) -> float:
+    """Return how similar a and b are.
+
+    Returns:
+        float: 1 on perfectly identical strings, 0 on asimilar strings.
+    """
+    return SequenceMatcher(None, a, b).ratio()
+
+
+@st.composite
+def draw_text_and_substring(draw, substring_max_size: int):
+    text = draw(st.text(min_size=1))
+    substring_length = draw(st.integers(min_value=1, max_value=substring_max_size))
+    assume(len(text) - substring_length > 0)
+
+    idx = draw(st.integers(min_value=0, max_value=len(text) - substring_length))
+    return (text, text[idx:idx+substring_length])
 
 
 class MultipleReplaceTests(TestCase):
@@ -27,12 +49,14 @@ class MultipleReplaceTests(TestCase):
         with self.assertRaises(ValueError):
             multiple_replace({"": "spam"}, text)
 
-    @given(st.text(), st.text(min_size=1), st.text())
-    @example("I like tea", "tea", "coffee")  # --> I like coffee
-    def test_replace_single_as_replace(self, text, before, after):
+    @given(draw_text_and_substring(5), st.text())
+    @example(("I like tea", "tea"), "coffee")  # --> I like coffee
+    def test_replace_single_as_replace(self, text_and_before, after):
         """Test that single replacement works as str.replace."""
+        text, before = text_and_before
         new_text = text.replace(before, after)
         event("new_text == text: " + str(new_text == text))
+        target(-similar(new_text, text))
 
         self.assertEqual(multiple_replace({before: after}, text), new_text)
 
