@@ -11,21 +11,15 @@ from ra_utils.transpose_dict import transpose_dict
 @pytest.mark.parametrize(
     "before,after",
     [
+        ({"test_key1": "test_value1"}, {"test_value1": ["test_key1"]}),
         (
-            {'test_key1': 'test_value1'},
-            {'test_value1': ['test_key1']}
-        ),
-        (
-            { 
-                'test_key1': 'test_value1', 
-                'test_key2': 'test_value2', 
-                'test_key3': 'test_value1'
-            },
             {
-                'test_value1': ['test_key1', 'test_key3'],
-                'test_value2': ['test_key2']
-            } 
-        )
+                "test_key1": "test_value1",
+                "test_key2": "test_value2",
+                "test_key3": "test_value1",
+            },
+            {"test_value1": ["test_key1", "test_key3"], "test_value2": ["test_key2"]},
+        ),
     ],
 )
 def test_transpose_dict(before, after):
