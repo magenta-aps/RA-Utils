@@ -100,7 +100,7 @@ def test_semantic_version_fixtures(version: str, valid: bool):
 
 
 @given(
-    version=st.from_regex(get_regex(), fullmatch=True), valid=st.sampled_from([True])
+    version=st.from_regex(get_regex(), fullmatch=True), valid=st.just(True)
 )
 @pytest.mark.skipif(_has_pydantic is False, reason="pydantic not installed")
 def test_semantic_version_hypothesis_positive(version: str, valid: bool):
@@ -109,7 +109,7 @@ def test_semantic_version_hypothesis_positive(version: str, valid: bool):
 
 @given(
     version=st.text().filter(lambda string: bool(get_regex().match(string)) is False),
-    valid=st.sampled_from([False]),
+    valid=st.just(False),
 )
 @pytest.mark.skipif(_has_pydantic is False, reason="pydantic not installed")
 def test_semantic_version_hypothesis_negative(version: str, valid: bool):
