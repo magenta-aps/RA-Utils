@@ -10,6 +10,12 @@ from typing import Sequence
 import hypothesis.strategies as st
 from hypothesis.strategies import SearchStrategy
 
+_has_zoneinfo = True
+try:
+    import zoneinfo  # noqa: F401
+except ImportError:  # pragma: no cover
+    _has_zoneinfo = False
+
 
 def deferred_hashable() -> SearchStrategy:
     stategies: Sequence[SearchStrategy] = list(
@@ -18,28 +24,36 @@ def deferred_hashable() -> SearchStrategy:
     return cast(SearchStrategy, st.one_of(stategies))
 
 
-base_strategies: Sequence[SearchStrategy] = [
-    st.binary(),
-    st.booleans(),
-    st.characters(),
-    st.complex_numbers(allow_nan=False),
-    st.dates(),
-    st.datetimes(),
-    st.decimals(allow_nan=False),
-    st.emails(),
-    st.floats(allow_nan=False),
-    st.fractions(),
-    st.functions(),
-    st.integers(),
-    st.ip_addresses(),
-    st.none(),
-    st.text(),
-    st.timedeltas(),
-    st.times(),
-    # st.timezone_keys(),
-    # st.timezones(),
-    st.uuids(),
-]
+base_strategies: Sequence[SearchStrategy] = list(
+    chain(
+        [
+            st.binary(),
+            st.booleans(),
+            st.characters(),
+            st.complex_numbers(allow_nan=False),
+            st.dates(),
+            st.datetimes(),
+            st.decimals(allow_nan=False),
+            st.emails(),
+            st.floats(allow_nan=False),
+            st.fractions(),
+            st.functions(),
+            st.integers(),
+            st.ip_addresses(),
+            st.none(),
+            st.text(),
+            st.timedeltas(),
+            st.times(),
+            st.uuids(),
+        ],
+        [
+            st.timezone_keys(),
+            st.timezones(),
+        ]
+        if _has_zoneinfo
+        else [],
+    )
+)
 non_hashable_strategies: Sequence[SearchStrategy] = [
     st.slices(1),
     st.dictionaries(
