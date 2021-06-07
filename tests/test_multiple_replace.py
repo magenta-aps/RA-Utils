@@ -3,10 +3,9 @@
 # SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
 # --------------------------------------------------------------------------------------
-import random
+from difflib import SequenceMatcher
 from functools import reduce
 from unittest import TestCase
-from difflib import SequenceMatcher
 
 import hypothesis.strategies as st
 from hypothesis import assume
@@ -34,7 +33,7 @@ def draw_text_and_substring(draw, substring_max_size: int):
     assume(len(text) - substring_length > 0)
 
     idx = draw(st.integers(min_value=0, max_value=len(text) - substring_length))
-    return (text, text[idx:idx+substring_length])
+    return (text, text[idx : idx + substring_length])
 
 
 class MultipleReplaceTests(TestCase):
