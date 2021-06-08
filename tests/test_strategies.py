@@ -6,6 +6,8 @@
 # --------------------------------------------------------------------------------------
 # Imports
 # --------------------------------------------------------------------------------------
+import re
+
 from hypothesis import given
 from hypothesis import strategies as st
 
@@ -16,6 +18,8 @@ from ra_utils.strategies import not_from_regex
 # --------------------------------------------------------------------------------------
 
 
-@given(not_string=not_from_regex(r"test"), string=st.from_regex(r"test"))
-def test_strategy(not_string, string):
-    assert not_string != string
+@given(st.data())
+def test_not_from_regex(data):
+    test_str = r"^test$"
+    not_matching = data.draw(not_from_regex(test_str))
+    assert re.match(test_str, not_matching) is None
