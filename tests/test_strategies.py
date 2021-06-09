@@ -20,6 +20,6 @@ from ra_utils.strategies import not_from_regex
 
 @given(st.data())
 def test_not_from_regex(data):
-    test_str = r"^test$"
+    test_str = r"^" + re.escape(data.draw(st.text())) + "$"
     not_matching = data.draw(not_from_regex(test_str))
     assert re.match(test_str, not_matching) is None
