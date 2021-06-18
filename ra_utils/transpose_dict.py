@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------------------
 from typing import Any
 from typing import Callable
-from typing import cast
 from typing import Dict
 from typing import Optional
 from typing import Tuple
@@ -117,7 +116,5 @@ def transpose_dict(
     # Reverse the dict
     reversed_dict: Dict[DictValueType, Tuple[DictKeyType, ...]] = dict()
     for key, value in hashdict.items():
-        reversed_dict[value] = cast(
-            Tuple[DictKeyType], reversed_dict.get(value, ())
-        ) + (key,)
+        reversed_dict[value] = reversed_dict.get(value, ()) + (key,)
     return reversed_dict
