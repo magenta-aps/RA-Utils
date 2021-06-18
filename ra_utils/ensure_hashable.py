@@ -39,6 +39,6 @@ def ensure_hashable(value: Any) -> Any:
         # Builtin and not an acceptable base type, so cannot be extended
         # I.e. it is impossible to make a 'frozenslice'.
         raise TypeError("slice cannot be made hashable")
-    if not is_hashable(value):
+    if not is_hashable(value):  # pragma: no cover
         raise TypeError(repr(value) + " is not hashable, please report this!")
     return value
