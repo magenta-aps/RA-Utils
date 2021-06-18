@@ -15,14 +15,9 @@ from more_itertools import unzip
 
 from ra_utils.frozen_dict import frozendict
 
+
 DictKeyType = TypeVar("DictKeyType")
 DictValueType = TypeVar("DictValueType")
-
-IdentityType = TypeVar("IdentityType")
-
-
-def identity(x: IdentityType) -> IdentityType:
-    return x
 
 
 def dict_map(
