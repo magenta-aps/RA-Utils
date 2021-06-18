@@ -4,14 +4,14 @@
 # SPDX-License-Identifier: MPL-2.0
 # --------------------------------------------------------------------------------------
 from collections import defaultdict
-from inspect import signature
 from typing import Any
 from typing import Callable
 from typing import Dict
 from typing import List
 from typing import Optional
 from typing import TypeVar
-from typing import Union
+
+from more_itertools import unzip
 
 from ra_utils.frozen_dict import frozendict
 
@@ -21,25 +21,18 @@ DictValueType = TypeVar("DictValueType")
 DictMapKeyReturnType = TypeVar("DictMapKeyReturnType")
 DictMapValueReturnType = TypeVar("DictMapValueReturnType")
 
+IdentityType = TypeVar("IdentityType")
+
+
+def identity(x: IdentityType) -> IdentityType:
+    return x
+
 
 def dict_map(
     dicty: Dict[DictKeyType, DictValueType],
-    key_func: Optional[
-        Union[
-            Callable[[DictKeyType], DictMapKeyReturnType],
-            Callable[[DictKeyType, DictValueType], DictMapKeyReturnType],
-        ]
-    ] = None,
-    value_func: Optional[
-        Union[
-            Callable[[DictValueType], DictMapValueReturnType],
-            Callable[[DictValueType, DictKeyType], DictMapValueReturnType],
-        ]
-    ] = None,
-) -> Dict[
-    Union[DictKeyType, DictMapKeyReturnType],
-    Union[DictValueType, DictMapValueReturnType],
-]:
+    key_func: Optional[Callable] = None,
+    value_func: Optional[Callable] = None,
+) -> Dict:
     """Map the dict values.
 
     Example:
@@ -52,30 +45,18 @@ def dict_map(
     Returns:
         dict: A dict where func has been applied to every value.
     """
+    # Handle base-cases, i.e. empty dict and no transformation
+    if not dicty:
+        return dicty
+    if key_func is None and value_func is None:
+        return dicty
 
-    def identity(
-        x: Union[DictKeyType, DictValueType]
-    ) -> Union[DictKeyType, DictValueType]:
-        return x
-
-    def to_two_arg(
-        func: Union[Callable[[Any], Any], Callable[[Any, Any], Any]]
-    ) -> Callable[[Any, Any], Any]:
-        sig = signature(func)
-        params = sig.parameters
-        if len(params) > 2:
-            raise TypeError("Provided mapping function takes too many arguments")
-        if len(params) < 1:
-            raise TypeError("Provided mapping function takes too few arguments")
-        if len(params) == 1:
-            return lambda key, value: func(key)  # type: ignore
-        return func  # type: ignore
-
-    key_func = to_two_arg(key_func or identity)
-    value_func = to_two_arg(value_func or identity)
-    return dict(
-        [(key_func(key, value), value_func(value, key)) for key, value in dicty.items()]
-    )
+    keys, values = unzip(dicty.items())
+    if key_func:
+        keys = map(key_func, keys)
+    if value_func:
+        values = map(value_func, values)
+    return dict(zip(keys, values))
 
 
 def ensure_hashable(value: Any) -> Any:
