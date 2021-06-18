@@ -7,7 +7,8 @@ from collections.abc import Hashable
 from decimal import Decimal
 from typing import Any
 
-import ra_utils.frozen_dict
+from ra_utils.dict_map import dict_map
+from ra_utils.frozen_dict import frozendict
 
 
 def is_hashable(value: Any) -> bool:
@@ -26,9 +27,14 @@ def is_probably_hashable(value: Any) -> bool:
 
 def ensure_hashable(value: Any) -> Any:
     """Convert input into hashable equivalents if required."""
-    frozendict = ra_utils.frozen_dict.frozendict
     if isinstance(value, dict):
-        value = frozendict(value)
+        value = frozendict(
+            dict_map(
+                value,
+                key_func=ensure_hashable,
+                value_func=ensure_hashable,
+            )
+        )
     elif isinstance(value, set):
         value = frozenset(map(ensure_hashable, value))
     elif isinstance(value, list):

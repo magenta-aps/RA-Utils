@@ -7,7 +7,6 @@ from typing import Dict
 from typing import Tuple
 from typing import TypeVar
 
-from ra_utils.dict_map import dict_map_value
 from ra_utils.ensure_hashable import ensure_hashable
 
 
@@ -59,7 +58,7 @@ def transpose_dict(
     """
 
     # Ensure all values are hashable
-    hashdict = dict_map_value(ensure_hashable, dicty)
+    hashdict = ensure_hashable(dicty)
     # Reverse the dict
     reversed_dict: Dict[DictValueType, Tuple[DictKeyType, ...]] = dict()
     for key, value in hashdict.items():

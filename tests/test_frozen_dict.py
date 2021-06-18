@@ -14,6 +14,7 @@ from hypothesis import given
 from hypothesis import strategies as st
 
 from .utils import recursive_strategies
+from ra_utils.ensure_hashable import ensure_hashable
 from ra_utils.frozen_dict import FrozenDict
 from ra_utils.frozen_dict import frozendict
 
@@ -39,7 +40,7 @@ def test_getitem_static(value):
     assert getitem(dicty, "status") == value
     assert itemgetter("status")(dicty) == value
 
-    frozen_dict = frozendict(**dicty)
+    frozen_dict = frozendict(status=value)
     check_status(frozen_dict, value)
 
 
@@ -49,12 +50,12 @@ def test_setitem_static(value):
     dicty["status"] = value
     assert dicty["status"] == value
 
-    frozen_dict = frozendict({})
+    frozen_dict = frozendict()
     with pytest.raises(TypeError) as exc_info:
         frozen_dict["status"] = value  # type: ignore
     assert no_assignment_error in str(exc_info.value)
 
-    frozen_dict = frozendict({})
+    frozen_dict = frozendict()
     with pytest.raises(TypeError) as exc_info:
         setitem(frozen_dict, "status", value)  # type: ignore
     assert no_assignment_error in str(exc_info.value)
@@ -66,12 +67,12 @@ def test_delitem_static(value):
     del dicty["status"]
     assert dicty == {}
 
-    frozen_dict = frozendict({"status": value})
+    frozen_dict = frozendict(status=value)
     with pytest.raises(TypeError) as exc_info:
         del frozen_dict["status"]  # type: ignore
     assert no_deletion_error in str(exc_info.value)
 
-    frozen_dict = frozendict({"status": value})
+    frozen_dict = frozendict(status=value)
     with pytest.raises(TypeError) as exc_info:
         delitem(frozen_dict, "status")  # type: ignore
     assert no_deletion_error in str(exc_info.value)
@@ -84,7 +85,7 @@ def test_getitem_dynamic(key, value):
     assert getitem(dicty, key) == value
     assert itemgetter(key)(dicty) == value
 
-    frozen_dict = frozendict(dicty)
+    frozen_dict = frozendict(**dicty)
     check_status_key(frozen_dict, key, value)
 
 
@@ -94,12 +95,12 @@ def test_setitem_dynamic(key, value):
     dicty[key] = value
     assert dicty[key] == value
 
-    frozen_dict = frozendict({})
+    frozen_dict = frozendict()
     with pytest.raises(TypeError) as exc_info:
         frozen_dict[key] = value  # type: ignore
     assert no_assignment_error in str(exc_info.value)
 
-    frozen_dict = frozendict({})
+    frozen_dict = frozendict()
     with pytest.raises(TypeError) as exc_info:
         setitem(frozen_dict, key, value)  # type: ignore
     assert no_assignment_error in str(exc_info.value)
@@ -111,12 +112,12 @@ def test_delitem_dynamic(key, value):
     del dicty[key]
     assert dicty == {}
 
-    frozen_dict = frozendict({key: value})
+    frozen_dict = frozendict(**{key: value})
     with pytest.raises(TypeError) as exc_info:
         del frozen_dict[key]  # type: ignore
     assert no_deletion_error in str(exc_info.value)
 
-    frozen_dict = frozendict({key: value})
+    frozen_dict = frozendict(**{key: value})
     with pytest.raises(TypeError) as exc_info:
         delitem(frozen_dict, key)  # type: ignore
     assert no_deletion_error in str(exc_info.value)
@@ -125,7 +126,7 @@ def test_delitem_dynamic(key, value):
 @given(st.dictionaries(st.text(), st.text()))
 def test_ordinary_dict_functionality(dicty: dict):
     """Test that FrozenDict functions similar to an ordinary dict."""
-    frozen_dict = frozendict(dicty)
+    frozen_dict = frozendict(**dicty)
 
     assert dicty.items() == frozen_dict.items()
     assert len(dicty) == len(frozen_dict)
@@ -142,23 +143,25 @@ def test_hash(dicty: dict):
         hash(dicty)
     assert "unhashable type: 'dict'" in str(exc_info.value)
 
-    hashval1 = hash(frozendict(dicty))
-    hashval2 = hash(frozendict(dicty))
+    hashval1 = hash(frozendict(**dicty))
+    hashval2 = hash(frozendict(**dicty))
     assert hashval1 == hashval2
 
 
 def test_hash_emptydict():
-    assert hash(frozendict({})) == 0
-    assert hash(frozendict({})) == 0
+    assert hash(frozendict()) == 0
+    assert hash(frozendict()) == 0
 
 
 def test_hash_tuples():
-    dicty = frozendict({"a": 1, None: None, b"": 3, "": {}})
+    dicty = ensure_hashable({"a": 1, None: None, b"": 3, "": {}})
     hashval1 = hash(dicty)
     hashval2 = hash(dicty)
     assert hashval1 == hashval2
 
-    dicty = frozendict({"a": None, "b": {"c": "d"}, "e": ["f", "g"], "h": {"i", "j"}})
+    dicty = ensure_hashable(
+        {"a": None, "b": {"c": "d"}, "e": ["f", "g"], "h": {"i", "j"}}
+    )
     hashval1 = hash(dicty)
     hashval2 = hash(dicty)
     assert hashval1 == hashval2
