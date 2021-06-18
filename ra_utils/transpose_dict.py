@@ -17,6 +17,7 @@ DictValueType = TypeVar("DictValueType")
 
 def ensure_hashable(value: Any) -> Any:
     """Convert input into hashable equivalents if required."""
+    # TODO: Recursive conversion
     if isinstance(value, dict):
         value = frozendict(**value)
     elif isinstance(value, set):
