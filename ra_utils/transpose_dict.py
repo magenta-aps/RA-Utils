@@ -4,50 +4,16 @@
 # SPDX-License-Identifier: MPL-2.0
 # --------------------------------------------------------------------------------------
 from typing import Any
-from typing import Callable
 from typing import Dict
-from typing import Optional
 from typing import Tuple
 from typing import TypeVar
 
-from more_itertools import unzip
-
+from ra_utils.dict_map import dict_map
 from ra_utils.frozen_dict import frozendict
 
 
 DictKeyType = TypeVar("DictKeyType")
 DictValueType = TypeVar("DictValueType")
-
-
-def dict_map(
-    dicty: Dict[DictKeyType, DictValueType],
-    key_func: Optional[Callable] = None,
-    value_func: Optional[Callable] = None,
-) -> Dict:
-    """Map the dict values.
-
-    Example:
-        input_dict = {1: 1, 2: 2, 3: 3}
-        output_dict = dict_map(input_dict, value_func=lambda value: value ** 2)
-        self.assertEqual(output_dict, {1: 1, 2: 4, 3: 9})
-        output_dict = dict_map(input_dict, key_func=lambda key: key ** 2)
-        self.assertEqual(output_dict, {1: 1, 4: 2, 9: 3})
-
-    Returns:
-        dict: A dict where func has been applied to every value.
-    """
-    # Handle base-cases, i.e. empty dict and no transformation
-    if not dicty:
-        return dicty
-    if key_func is None and value_func is None:
-        return dicty
-
-    keys, values = unzip(dicty.items())
-    if key_func:
-        keys = map(key_func, keys)
-    if value_func:
-        values = map(value_func, values)
-    return dict(zip(keys, values))
 
 
 def ensure_hashable(value: Any) -> Any:
