@@ -123,14 +123,14 @@ def test_delattr_dynamic(key, value):
 
 
 @given(st.dictionaries(st.text(), st.text()))
-def test_ordinary_dict_functionality(self, dicty: dict):
+def test_ordinary_dict_functionality(dicty: dict):
     """Test that FrozenDict functions similar to an ordinary dict."""
     frozen_dict = frozendict(dicty)
 
-    self.assertEqual(dicty.items(), frozen_dict.items())
-    self.assertEqual(len(dicty), len(frozen_dict))
-    self.assertEqual(str(dicty), str(frozen_dict))
-    self.assertEqual(repr(dicty), repr(frozen_dict))
+    assert dicty.items() == frozen_dict.items()
+    assert len(dicty) == len(frozen_dict)
+    assert str(dicty) == str(frozen_dict)
+    assert repr(dicty) == repr(frozen_dict)
 
     for key in dicty.keys():
-        self.assertEqual(dicty[key], frozen_dict[key])
+        assert dicty[key] == frozen_dict[key]
