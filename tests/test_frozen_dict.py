@@ -134,3 +134,31 @@ def test_ordinary_dict_functionality(dicty: dict):
 
     for key in dicty.keys():
         assert dicty[key] == frozen_dict[key]
+
+
+@given(st.dictionaries(st.text(), st.text()))
+def test_hash(dicty: dict):
+    with pytest.raises(TypeError) as exc_info:
+        hash(dicty)
+    assert "unhashable type: 'dict'" in str(exc_info.value)
+
+    hashval1 = hash(frozendict(dicty))
+    hashval2 = hash(frozendict(dicty))
+    assert hashval1 == hashval2
+
+
+def test_hash_emptydict():
+    assert hash(frozendict({})) == 0
+    assert hash(frozendict({})) == 0
+
+
+def test_hash_tuples():
+    dicty = frozendict({"a": 1, None: None, b"": 3, "": {}})
+    hashval1 = hash(dicty)
+    hashval2 = hash(dicty)
+    assert hashval1 == hashval2
+
+    dicty = frozendict({"a": None, "b": {"c": "d"}, "e": ["f", "g"], "h": {"i", "j"}})
+    hashval1 = hash(dicty)
+    hashval2 = hash(dicty)
+    assert hashval1 == hashval2

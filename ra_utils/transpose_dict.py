@@ -3,39 +3,20 @@
 # SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
 # --------------------------------------------------------------------------------------
-from typing import Any
 from typing import Dict
 from typing import Tuple
 from typing import TypeVar
 
-from ra_utils.dict_map import dict_map
-from ra_utils.frozen_dict import frozendict
+from ra_utils.dict_map import dict_map_value
+from ra_utils.ensure_hashable import ensure_hashable
 
 
 DictKeyType = TypeVar("DictKeyType")
 DictValueType = TypeVar("DictValueType")
 
 
-def ensure_hashable(value: Any) -> Any:
-    """Convert input into hashable equivalents if required."""
-    if isinstance(value, dict):
-        value = frozendict(
-            dict_map(
-                value,
-                key_func=ensure_hashable,
-                value_func=ensure_hashable,
-            )
-        )
-    elif isinstance(value, set):
-        value = frozenset(map(ensure_hashable, value))
-    elif isinstance(value, list):
-        value = tuple(map(ensure_hashable, value))
-    hash(value)
-    return value
-
-
 def transpose_dict(
-    mydict: Dict[DictKeyType, DictValueType]
+    dicty: Dict[DictKeyType, DictValueType]
 ) -> Dict[DictValueType, Tuple[DictKeyType, ...]]:
     """Transpose a dictionary, such that keys become values and values become keys.
 
@@ -78,7 +59,7 @@ def transpose_dict(
     """
 
     # Ensure all values are hashable
-    hashdict = dict_map(mydict, value_func=ensure_hashable)
+    hashdict = dict_map_value(ensure_hashable, dicty)
     # Reverse the dict
     reversed_dict: Dict[DictValueType, Tuple[DictKeyType, ...]] = dict()
     for key, value in hashdict.items():

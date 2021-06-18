@@ -4,9 +4,14 @@
 # SPDX-License-Identifier: MPL-2.0
 # --------------------------------------------------------------------------------------
 from collections.abc import Mapping
+from functools import reduce
+from operator import xor
 from typing import Any
 from typing import Iterator
 from typing import Optional
+
+import ra_utils.ensure_hashable
+from ra_utils.dict_map import dict_map
 
 
 class FrozenDict(Mapping):
@@ -14,7 +19,6 @@ class FrozenDict(Mapping):
 
     def __init__(self, *args: Any, **kwargs: Optional[Any]) -> None:
         self._raw_dict = dict(*args, **kwargs)
-        self._hash = None
 
     def __getitem__(self, key: Any) -> Any:
         value = self._raw_dict.__getitem__(key)
@@ -33,7 +37,12 @@ class FrozenDict(Mapping):
         return len(self._raw_dict)
 
     def __hash__(self) -> int:
-        return hash(tuple(sorted(self._raw_dict.items())))
+        ensure_hashable = ra_utils.ensure_hashable.ensure_hashable
+        hashable_dict = dict_map(self._raw_dict, ensure_hashable, ensure_hashable)
+        # The order of the elements does not matter, since we are using xor to reduce
+        hashed_elements = map(hash, hashable_dict.items())
+        hashed_value = reduce(xor, hashed_elements, 0)
+        return hashed_value
 
 
 def frozendict(*args: Any, **kwargs: Optional[Any]) -> FrozenDict:
