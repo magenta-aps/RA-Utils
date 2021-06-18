@@ -18,7 +18,12 @@ class FrozenDict(Mapping):
     """Hashable immutable dictionary."""
 
     def __init__(self, *args: Any, **kwargs: Optional[Any]) -> None:
-        self._raw_dict = dict(*args, **kwargs)
+        ensure_hashable = ra_utils.ensure_hashable.ensure_hashable
+        self._raw_dict = dict_map(
+            dict(*args, **kwargs),
+            key_func=ensure_hashable,
+            value_func=ensure_hashable,
+        )
 
     def __getitem__(self, key: Any) -> Any:
         value = self._raw_dict.__getitem__(key)
@@ -37,10 +42,8 @@ class FrozenDict(Mapping):
         return len(self._raw_dict)
 
     def __hash__(self) -> int:
-        ensure_hashable = ra_utils.ensure_hashable.ensure_hashable
-        hashable_dict = dict_map(self._raw_dict, ensure_hashable, ensure_hashable)
         # The order of the elements does not matter, since we are using xor to reduce
-        hashed_elements = map(hash, hashable_dict.items())
+        hashed_elements = map(hash, self.items())
         hashed_value = reduce(xor, hashed_elements, 0)
         return hashed_value
 

@@ -13,7 +13,7 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
-from .utils import any_strategy
+from .utils import recursive_strategies
 from ra_utils.frozen_dict import FrozenDict
 from ra_utils.frozen_dict import frozendict
 
@@ -32,8 +32,8 @@ def check_status(frozen_dict: FrozenDict, value: Any) -> None:
     check_status_key(frozen_dict, "status", value)
 
 
-@given(value=any_strategy)
-def test_getattr_static(value):
+@given(value=st.one_of(recursive_strategies))
+def test_getitem_static(value):
     dicty = {"status": value}
     assert dicty["status"] == value
     assert getitem(dicty, "status") == value
@@ -43,8 +43,8 @@ def test_getattr_static(value):
     check_status(frozen_dict, value)
 
 
-@given(value=any_strategy)
-def test_setattr_static(value):
+@given(value=st.one_of(recursive_strategies))
+def test_setitem_static(value):
     dicty = {}
     dicty["status"] = value
     assert dicty["status"] == value
@@ -60,8 +60,8 @@ def test_setattr_static(value):
     assert no_assignment_error in str(exc_info.value)
 
 
-@given(value=any_strategy)
-def test_delattr_static(value):
+@given(value=st.one_of(recursive_strategies))
+def test_delitem_static(value):
     dicty = {"status": value}
     del dicty["status"]
     assert dicty == {}
@@ -77,8 +77,8 @@ def test_delattr_static(value):
     assert no_deletion_error in str(exc_info.value)
 
 
-@given(key=st.text(min_size=1), value=any_strategy)
-def test_getattr_dynamic(key, value):
+@given(key=st.text(min_size=1), value=st.one_of(recursive_strategies))
+def test_getitem_dynamic(key, value):
     dicty = {key: value}
     assert dicty[key] == value
     assert getitem(dicty, key) == value
@@ -88,8 +88,8 @@ def test_getattr_dynamic(key, value):
     check_status_key(frozen_dict, key, value)
 
 
-@given(key=st.text(min_size=1), value=any_strategy)
-def test_setattr_dynamic(key, value):
+@given(key=st.text(min_size=1), value=st.one_of(recursive_strategies))
+def test_setitem_dynamic(key, value):
     dicty = {}
     dicty[key] = value
     assert dicty[key] == value
@@ -105,8 +105,8 @@ def test_setattr_dynamic(key, value):
     assert no_assignment_error in str(exc_info.value)
 
 
-@given(key=st.text(min_size=1), value=any_strategy)
-def test_delattr_dynamic(key, value):
+@given(key=st.text(min_size=1), value=st.one_of(recursive_strategies))
+def test_delitem_dynamic(key, value):
     dicty = {key: value}
     del dicty[key]
     assert dicty == {}
