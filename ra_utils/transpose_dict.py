@@ -9,6 +9,7 @@ from typing import Dict
 from typing import List
 from typing import TypeVar
 
+from ra_utils.apply import apply
 from ra_utils.frozen_dict import frozendict
 
 DictKeyType = TypeVar("DictKeyType")
@@ -19,11 +20,21 @@ def ensure_hashable(value: Any) -> Any:
     """Convert input into hashable equivalents if required."""
     # TODO: Recursive conversion
     if isinstance(value, dict):
-        value = frozendict(**value)
+        value = frozendict(
+            map(
+                apply(
+                    lambda dkey, dvalue: (
+                        ensure_hashable(dkey),
+                        ensure_hashable(dvalue),
+                    )
+                ),
+                value.items(),
+            )
+        )
     elif isinstance(value, set):
-        value = frozenset(value)
+        value = frozenset(map(ensure_hashable, value))
     elif isinstance(value, list):
-        value = tuple(value)
+        value = tuple(map(ensure_hashable, value))
     hash(value)
     return value
 
