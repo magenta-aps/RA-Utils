@@ -18,9 +18,6 @@ from ra_utils.frozen_dict import frozendict
 DictKeyType = TypeVar("DictKeyType")
 DictValueType = TypeVar("DictValueType")
 
-DictMapKeyReturnType = TypeVar("DictMapKeyReturnType")
-DictMapValueReturnType = TypeVar("DictMapValueReturnType")
-
 IdentityType = TypeVar("IdentityType")
 
 
