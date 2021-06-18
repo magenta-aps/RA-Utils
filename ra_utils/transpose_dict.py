@@ -3,12 +3,12 @@
 # SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
 # --------------------------------------------------------------------------------------
-from collections import defaultdict
 from typing import Any
 from typing import Callable
+from typing import cast
 from typing import Dict
-from typing import List
 from typing import Optional
+from typing import Tuple
 from typing import TypeVar
 
 from more_itertools import unzip
@@ -71,7 +71,7 @@ def ensure_hashable(value: Any) -> Any:
 
 def transpose_dict(
     mydict: Dict[DictKeyType, DictValueType]
-) -> Dict[DictValueType, List[DictKeyType]]:
+) -> Dict[DictValueType, Tuple[DictKeyType, ...]]:
     """Transpose a dictionary, such that keys become values and values become keys.
 
     **XXX: Currently broken, awaiting fix:
@@ -111,7 +111,13 @@ def transpose_dict(
     Returns:
         Tranposed dictionary.
     """
-    reversed_dict = defaultdict(list)
-    for key, value in mydict.items():
-        reversed_dict[ensure_hashable(value)].append(key)
-    return dict(reversed_dict)
+
+    # Ensure all values are hashable
+    hashdict = dict_map(mydict, value_func=ensure_hashable)
+    # Reverse the dict
+    reversed_dict: Dict[DictValueType, Tuple[DictKeyType, ...]] = dict()
+    for key, value in hashdict.items():
+        reversed_dict[value] = cast(
+            Tuple[DictKeyType], reversed_dict.get(value, ())
+        ) + (key,)
+    return reversed_dict
