@@ -34,3 +34,7 @@ class FrozenDict(Mapping):
 
     def __hash__(self) -> int:
         return hash(tuple(sorted(self._raw_dict.items())))
+
+
+def frozendict(*args: Any, **kwargs: Optional[Any]) -> FrozenDict:
+    return FrozenDict(*args, **kwargs)

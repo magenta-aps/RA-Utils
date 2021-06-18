@@ -4,12 +4,27 @@
 # SPDX-License-Identifier: MPL-2.0
 # --------------------------------------------------------------------------------------
 from collections import defaultdict
+from typing import Any
 from typing import Dict
 from typing import List
 from typing import TypeVar
 
+from ra_utils.frozen_dict import frozendict
+
 DictKeyType = TypeVar("DictKeyType")
 DictValueType = TypeVar("DictValueType")
+
+
+def ensure_hashable(value: Any) -> Any:
+    """Convert input into hashable equivalents if required."""
+    if isinstance(value, dict):
+        value = frozendict(**value)
+    elif isinstance(value, set):
+        value = frozenset(value)
+    elif isinstance(value, list):
+        value = tuple(value)
+    hash(value)
+    return value
 
 
 def transpose_dict(
@@ -56,5 +71,5 @@ def transpose_dict(
     """
     reversed_dict = defaultdict(list)
     for key, value in mydict.items():
-        reversed_dict[value].append(key)
+        reversed_dict[ensure_hashable(value)].append(key)
     return dict(reversed_dict)

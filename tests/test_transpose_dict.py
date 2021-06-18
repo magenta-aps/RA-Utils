@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------------------
 import pytest
 
+from ra_utils.frozen_dict import frozendict
 from ra_utils.transpose_dict import transpose_dict
 
 
@@ -20,6 +21,12 @@ from ra_utils.transpose_dict import transpose_dict
             },
             {"test_value1": ["test_key1", "test_key3"], "test_value2": ["test_key2"]},
         ),
+        ({"a": {"b": "c"}}, {frozendict({"b": "c"}): ["a"]}),
+        ({"a": frozendict({"b": "c"})}, {frozendict({"b": "c"}): ["a"]}),
+        ({"a": {"b", "c"}}, {frozenset({"b", "c"}): ["a"]}),
+        ({"a": frozenset({"b": "c"})}, {frozenset({"b": "c"}): ["a"]}),
+        ({"a": ["b", "c"]}, {("b", "c"): ["a"]}),
+        ({"a": ("b", "c")}, {("b", "c"): ["a"]}),
     ],
 )
 def test_transpose_dict(before, after):
