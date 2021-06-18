@@ -27,6 +27,7 @@ from ra_utils.transpose_dict import transpose_dict
         ({"a": frozenset({"b": "c"})}, {frozenset({"b": "c"}): ["a"]}),
         ({"a": ["b", "c"]}, {("b", "c"): ["a"]}),
         ({"a": ("b", "c")}, {("b", "c"): ["a"]}),
+        # TODO: Use other unhashables, i.e. hypothesis non_hashable_strategies
     ],
 )
 def test_transpose_dict(before, after):
