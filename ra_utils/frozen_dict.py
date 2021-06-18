@@ -3,18 +3,19 @@
 # SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
 # --------------------------------------------------------------------------------------
-from collections.abc import Iterator
+from collections.abc import Iterator as IteratorABC
 from collections.abc import Mapping
 from functools import reduce
 from operator import xor
 from typing import Any
+from typing import Iterator
 from typing import List
 from typing import Optional
 from typing import Union
 
 
 def is_iterator(value: Any) -> bool:
-    return isinstance(value, Iterator)
+    return isinstance(value, IteratorABC)
 
 
 class FrozenDict(Mapping):
