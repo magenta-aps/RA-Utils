@@ -16,10 +16,10 @@ def test_dict_map():
 
     input_dict = {1: 1, 2: 2, 3: 3}
     output_dict = dict_map(input_dict, value_func=lambda value: value ** 2)
-    assert output_dict == {1: 1, 2: 4, 3: 6}
+    assert output_dict == {1: 1, 2: 4, 3: 9}
 
     output_dict = dict_map(input_dict, key_func=lambda key: key ** 2)
-    assert output_dict == {1: 1, 4: 2, 6: 3}
+    assert output_dict == {1: 1, 4: 2, 9: 3}
 
 
 @pytest.mark.parametrize(
