@@ -41,7 +41,7 @@ def test_getattr_static(value):
     assert getitem(dicty, "status") == value
     assert itemgetter("status")(dicty) == value
 
-    attr_dict = AttrDict(dicty)
+    attr_dict = attrdict(dicty)
     check_status(attr_dict, value)
 
 
@@ -51,19 +51,19 @@ def test_setattr_static(value):
     dicty["status"] = value
     assert dicty["status"] == value
 
-    attr_dict = AttrDict({})
+    attr_dict = attrdict({})
     attr_dict["status"] = value
     check_status(attr_dict, value)
 
-    attr_dict = AttrDict({})
+    attr_dict = attrdict({})
     setitem(attr_dict, "status", value)
     check_status(attr_dict, value)
 
-    attr_dict = AttrDict({})
+    attr_dict = attrdict({})
     attr_dict.status = value  # type: ignore
     check_status(attr_dict, value)
 
-    attr_dict = AttrDict({})
+    attr_dict = attrdict({})
     setattr(attr_dict, "status", value)
     check_status(attr_dict, value)
 
@@ -74,19 +74,19 @@ def test_delattr_static(value):
     del dicty["status"]
     assert dicty == {}
 
-    attr_dict = AttrDict({"status": value})
+    attr_dict = attrdict({"status": value})
     del attr_dict["status"]
     assert attr_dict == {}
 
-    attr_dict = AttrDict({"status": value})
+    attr_dict = attrdict({"status": value})
     delitem(attr_dict, "status")
     assert attr_dict == {}
 
-    attr_dict = AttrDict({"status": value})
+    attr_dict = attrdict({"status": value})
     del attr_dict.status  # type: ignore
     assert attr_dict == {}
 
-    attr_dict = AttrDict({"status": value})
+    attr_dict = attrdict({"status": value})
     delattr(attr_dict, "status")
     assert attr_dict == {}
 
@@ -100,7 +100,7 @@ def test_getattr_dynamic(key, value):
     assert getitem(dicty, key) == value
     assert itemgetter(key)(dicty) == value
 
-    attr_dict = AttrDict(dicty)
+    attr_dict = attrdict(dicty)
     check_status_key(attr_dict, key, value)
 
 
@@ -112,15 +112,15 @@ def test_setattr_dynamic(key, value):
     dicty[key] = value
     assert dicty[key] == value
 
-    attr_dict = AttrDict({})
+    attr_dict = attrdict({})
     attr_dict[key] = value
     check_status_key(attr_dict, key, value)
 
-    attr_dict = AttrDict({})
+    attr_dict = attrdict({})
     setitem(attr_dict, key, value)
     check_status_key(attr_dict, key, value)
 
-    attr_dict = AttrDict({})
+    attr_dict = attrdict({})
     setattr(attr_dict, key, value)
     check_status_key(attr_dict, key, value)
 
@@ -133,15 +133,15 @@ def test_delattr_dynamic(key, value):
     del dicty[key]
     assert dicty == {}
 
-    attr_dict = AttrDict({key: value})
+    attr_dict = attrdict({key: value})
     del attr_dict[key]
     assert attr_dict == {}
 
-    attr_dict = AttrDict({key: value})
+    attr_dict = attrdict({key: value})
     delitem(attr_dict, key)
     assert attr_dict == {}
 
-    attr_dict = AttrDict({key: value})
+    attr_dict = attrdict({key: value})
     delattr(attr_dict, key)
     assert attr_dict == {}
 
