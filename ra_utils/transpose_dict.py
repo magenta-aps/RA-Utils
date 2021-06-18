@@ -4,31 +4,88 @@
 # SPDX-License-Identifier: MPL-2.0
 # --------------------------------------------------------------------------------------
 from collections import defaultdict
+from inspect import signature
 from typing import Any
+from typing import Callable
 from typing import Dict
 from typing import List
+from typing import Optional
 from typing import TypeVar
+from typing import Union
 
-from ra_utils.apply import apply
 from ra_utils.frozen_dict import frozendict
 
 DictKeyType = TypeVar("DictKeyType")
 DictValueType = TypeVar("DictValueType")
 
+DictMapKeyReturnType = TypeVar("DictMapKeyReturnType")
+DictMapValueReturnType = TypeVar("DictMapValueReturnType")
+
+
+def dict_map(
+    dicty: Dict[DictKeyType, DictValueType],
+    key_func: Optional[
+        Union[
+            Callable[[DictKeyType], DictMapKeyReturnType],
+            Callable[[DictKeyType, DictValueType], DictMapKeyReturnType],
+        ]
+    ] = None,
+    value_func: Optional[
+        Union[
+            Callable[[DictValueType], DictMapValueReturnType],
+            Callable[[DictValueType, DictKeyType], DictMapValueReturnType],
+        ]
+    ] = None,
+) -> Dict[
+    Union[DictKeyType, DictMapKeyReturnType],
+    Union[DictValueType, DictMapValueReturnType],
+]:
+    """Map the dict values.
+
+    Example:
+        input_dict = {1: 1, 2: 2, 3: 3}
+        output_dict = dict_map(input_dict, value_func=lambda value: value ** 2)
+        self.assertEqual(output_dict, {1: 1, 2: 4, 3: 6})
+        output_dict = dict_map(input_dict, key_func=lambda key: key ** 2)
+        self.assertEqual(output_dict, {1: 1, 4: 2, 6: 3})
+
+    Returns:
+        dict: A dict where func has been applied to every value.
+    """
+
+    def identity(
+        x: Union[DictKeyType, DictValueType]
+    ) -> Union[DictKeyType, DictValueType]:
+        return x
+
+    def to_two_arg(
+        func: Union[Callable[[Any], Any], Callable[[Any, Any], Any]]
+    ) -> Callable[[Any, Any], Any]:
+        sig = signature(func)
+        params = sig.parameters
+        if len(params) > 2:
+            raise TypeError("Provided mapping function takes too many arguments")
+        if len(params) < 1:
+            raise TypeError("Provided mapping function takes too few arguments")
+        if len(params) == 1:
+            return lambda key, value: func(key)  # type: ignore
+        return func  # type: ignore
+
+    key_func = to_two_arg(key_func or identity)
+    value_func = to_two_arg(value_func or identity)
+    return dict(
+        [(key_func(key, value), value_func(value, key)) for key, value in dicty.items()]
+    )
+
 
 def ensure_hashable(value: Any) -> Any:
     """Convert input into hashable equivalents if required."""
-    # TODO: Recursive conversion
     if isinstance(value, dict):
         value = frozendict(
-            map(
-                apply(
-                    lambda dkey, dvalue: (
-                        ensure_hashable(dkey),
-                        ensure_hashable(dvalue),
-                    )
-                ),
-                value.items(),
+            dict_map(
+                value,
+                key_func=ensure_hashable,
+                value_func=ensure_hashable,
             )
         )
     elif isinstance(value, set):
