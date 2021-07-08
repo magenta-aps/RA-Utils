@@ -14,10 +14,6 @@ from typing import Optional
 from typing import Union
 
 
-def is_iterator(value: Any) -> bool:
-    return isinstance(value, IteratorABC)
-
-
 class FrozenDict(Mapping):
     """Hashable immutable dictionary."""
 
@@ -32,12 +28,13 @@ class FrozenDict(Mapping):
             for key, value in mapping_or_iterator.items():
                 hash(key)
                 hash(value)
-        elif is_iterator(mapping_or_iterator):
-            mapping_or_iterator = list(mapping_or_iterator)
-            for item in mapping_or_iterator:
-                hash(item)
         else:
-            raise TypeError(str(type(mapping_or_iterator)) + " object is not iterable")
+            try:
+                mapping_or_iterator = list(mapping_or_iterator)
+                for item in mapping_or_iterator:
+                    hash(item)
+            except:
+                raise TypeError(str(type(mapping_or_iterator)) + " object is not iterable")
 
         for key, value in kwargs.items():
             hash(key)
