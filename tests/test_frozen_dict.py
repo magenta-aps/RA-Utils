@@ -168,14 +168,14 @@ def test_hash_tuples():
 
 
 def test_constructors():
-    a = frozendict({'a': 1})
-    assert a['a'] == 1
-    b = frozendict([('a', 1)])
-    assert b['a'] == 1
-    c = frozendict(iter([('a', 1)]))
-    assert c['a'] == 1
+    a = frozendict({"a": 1})
+    assert a["a"] == 1
+    b = frozendict([("a", 1)])
+    assert b["a"] == 1
+    c = frozendict(iter([("a", 1)]))
+    assert c["a"] == 1
     d = frozendict(a=1)
-    assert d['a'] == 1
+    assert d["a"] == 1
 
     with pytest.raises(TypeError) as exc_info:
         frozendict(1)

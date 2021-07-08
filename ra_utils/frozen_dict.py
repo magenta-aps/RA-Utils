@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
 # --------------------------------------------------------------------------------------
-from collections.abc import Iterator as IteratorABC
 from collections.abc import Mapping
 from functools import reduce
 from operator import xor
@@ -33,8 +32,10 @@ class FrozenDict(Mapping):
                 mapping_or_iterator = list(mapping_or_iterator)
                 for item in mapping_or_iterator:
                     hash(item)
-            except:
-                raise TypeError(str(type(mapping_or_iterator)) + " object is not iterable")
+            except Exception:
+                raise TypeError(
+                    str(type(mapping_or_iterator)) + " object is not iterable"
+                )
 
         for key, value in kwargs.items():
             hash(key)
