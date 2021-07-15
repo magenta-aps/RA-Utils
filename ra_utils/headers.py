@@ -12,6 +12,7 @@ from typing import Any
 from typing import Dict
 from typing import Optional
 from typing import Tuple
+from warnings import warn
 
 
 try:
@@ -57,15 +58,24 @@ class TokenSettings(BaseSettings):
             values (Dict[str, Any]): Initialised TokenSettings values.
 
         Raises:
-            ValueError: If none of CLIENT_SECRET or SAML_TOKEN are given
+            UserWarning: If none of CLIENT_SECRET or SAML_TOKEN are given
                 during initialisation.
+            PendingDeprecationWarning: If SAML_TOKEN is used.
+
 
         Returns:
             Dict[str, Any]: TokenSettings values, unchanged.
         """
-        keycloak_or_saml = any([values.get("client_secret"), values.get("saml_token")])
-        if not keycloak_or_saml:
-            raise ValueError("No secret or token given")
+
+        keycloak, saml = values.get("client_secret"), values.get("saml_token")
+        if not any([keycloak, saml]):
+            warn("No secret or token given", stacklevel=2)
+        if saml:
+            warn(
+                "Using SAML tokens will be deprecated",
+                PendingDeprecationWarning,
+                stacklevel=2,
+            )
         return values
 
     @lru_cache(maxsize=None)
@@ -97,7 +107,7 @@ class TokenSettings(BaseSettings):
         response_payload: Dict[str, Any] = response.json()
         expires: int = response_payload["expires_in"]
         token: str = response_payload["access_token"]
-        return time.time() + float(expires), token
+        return time.monotonic() + float(expires), token
 
     def _fetch_bearer(self) -> str:
         """Fetch a Keycloak bearer token.
@@ -106,7 +116,7 @@ class TokenSettings(BaseSettings):
             str: Bearer token.
         """
         expires, token = self._fetch_keycloak_token()
-        if expires < time.time():
+        if expires < time.monotonic():
             self._fetch_keycloak_token.cache_clear()
             _, token = self._fetch_keycloak_token()
         return "Bearer " + token

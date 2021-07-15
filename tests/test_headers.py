@@ -22,7 +22,6 @@ from pytest import MonkeyPatch
 
 no_deps = False
 try:
-    from pydantic import ValidationError
     from ra_utils.headers import AuthError
     from ra_utils.headers import TokenSettings
 except ImportError:
@@ -53,18 +52,18 @@ class MockResponse:
 
 def test_init(monkeypatch):
     monkeypatch.setenv("SAML_TOKEN", "test token")
-    assert TokenSettings()
+    with pytest.deprecated_call():
+        assert TokenSettings()
+    monkeypatch.delenv("SAML_TOKEN", raising=False)
     monkeypatch.setenv("CLIENT_SECRET", "test secret")
-    t_settings = TokenSettings()
-    assert t_settings.saml_token
-    assert t_settings.client_secret
+    assert TokenSettings()
 
 
 def test_validation(monkeypatch):
     # delete token/secret if they exist
     monkeypatch.delenv("SAML_TOKEN", raising=False)
     monkeypatch.delenv("CLIENT_SECRET", raising=False)
-    with pytest.raises(ValidationError, match="No secret or token given"):
+    with pytest.warns(UserWarning, match="No secret or token given"):
         TokenSettings()
 
 
@@ -82,6 +81,7 @@ def test_fetch_keycloak(t_delta: timedelta):
         settings._fetch_keycloak_token()
 
 
+@pytest.mark.filterwarnings("ignore: No secret or token given")
 def test_fetch_keycloak_errors(monkeypatch):
     fail_msg = "Oh no"
 
@@ -91,7 +91,6 @@ def test_fetch_keycloak_errors(monkeypatch):
             raise_msg=fail_msg,
         )
 
-    monkeypatch.setenv("SAML_TOKEN", "test_token")
     monkeypatch.delenv("CLIENT_SECRET", raising=False)
     monkeypatch.setattr(requests, "post", mock_post)
     settings = TokenSettings()
@@ -101,6 +100,7 @@ def test_fetch_keycloak_errors(monkeypatch):
     # Set a client secret
     monkeypatch.setenv("CLIENT_SECRET", "test secret")
     settings = TokenSettings()
+    settings._fetch_keycloak_token.cache_clear()
     with pytest.raises(AuthError, match=f"Failed to get Keycloak token: {fail_msg}"):
         settings._fetch_keycloak_token()
 
@@ -120,6 +120,7 @@ def test_fetch_bearer(t_delta: timedelta):
         assert settings._fetch_bearer()
 
 
+@pytest.mark.filterwarnings("ignore: Using SAML tokens")
 def test_get_headers(monkeypatch):
     monkeypatch.setattr(TokenSettings, "_fetch_bearer", lambda _: "Bearer token")
     monkeypatch.setenv("CLIENT_SECRET", "test secret")
