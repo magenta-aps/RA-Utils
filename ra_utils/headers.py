@@ -57,7 +57,7 @@ class TokenSettings(BaseSettings):
         Args:
             values (Dict[str, Any]): Initialised TokenSettings values.
 
-        Raises:
+        Emits:
             UserWarning: If none of CLIENT_SECRET or SAML_TOKEN are given
                 during initialisation.
             PendingDeprecationWarning: If SAML_TOKEN is used.
