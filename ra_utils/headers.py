@@ -95,7 +95,7 @@ class TokenSettings(BaseSettings):
         except requests.RequestException as err:
             raise AuthError(f"Failed to get Keycloak token: {err}")
         response_payload: Dict[str, Any] = response.json()
-        expires = response_payload["expires_in"]
+        expires: int = response_payload["expires_in"]
         token: str = response_payload["access_token"]
         return time.time() + float(expires), token
 
