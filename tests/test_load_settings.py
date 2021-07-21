@@ -7,6 +7,7 @@ from unittest import TestCase
 from unittest.mock import mock_open
 from unittest.mock import patch
 
+from ra_utils.load_settings import load_setting
 from ra_utils.load_settings import load_settings
 
 
@@ -25,6 +26,22 @@ class LoadSettingsTests(TestCase):
         result2 = load_settings()
         mock_file.assert_called_once()
         self.assertEqual(result1, result2)
+
+    @patch("builtins.open", new_callable=mock_open, read_data='{"a": 1}')
+    def test_load_one_setting(self, mock_file):
+        result1 = load_setting("a")()
+        self.assertEqual(result1, 1)
+
+        result2 = load_setting("a", 2)()
+        self.assertEqual(result2, 1)
+
+        result3 = load_setting("b", 3)()
+        self.assertEqual(result3, 3)
+
+        with self.assertRaises(ValueError):
+            load_setting("b")()
+
+        mock_file.assert_called_once()
 
     @patch("builtins.open", new_callable=mock_open, read_data="{}")
     def test_missing_file(self, mock_file):

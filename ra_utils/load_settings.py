@@ -7,6 +7,7 @@ import json
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
+from typing import Callable
 from typing import cast
 from typing import Dict
 
@@ -30,3 +31,27 @@ def load_settings() -> Dict[str, Any]:
     settings_path = cwd / "settings" / "settings.json"
     with open(str(settings_path), "r") as settings_file:
         return cast(Dict[str, Any], json.load(settings_file))
+
+
+read_setting_sentinel = object()
+
+
+def load_setting(
+    setting: str, default: Any = read_setting_sentinel
+) -> Callable[[], Any]:
+    """Load a single key from the settings/settings.json, optionally default.
+
+    This function is mainly for use as defaults in click or similar, hence why it is
+    lazily evaluated.
+
+    Returns:
+        func: Function evaluating to the value of the setting or the configured default.
+    """
+
+    def inner() -> Any:
+        value = load_settings().get(setting, default)
+        if value == read_setting_sentinel:
+            raise ValueError("Not in settings file and no default")
+        return value
+
+    return inner
