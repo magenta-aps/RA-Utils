@@ -39,7 +39,7 @@ read_setting_sentinel = object()
 def load_setting(
     setting: str, default: Any = read_setting_sentinel
 ) -> Callable[[], Any]:
-    """Load a single key from the settings/settings.json, optionally default.
+    """Load a single setting, defaulting to 'default' if not present
 
     This function is mainly for use as defaults in click or similar, hence why it is
     lazily evaluated.
