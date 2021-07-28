@@ -38,6 +38,21 @@ class AuthError(Exception):
 
 
 class TokenSettings(BaseSettings):
+    """Collection of settings required for authentication against OS2mo.
+
+    Example:
+        ```Python
+        import requests
+        from ra_utils.headers import TokenSettings
+
+        session = requests.Session()
+        session.headers = TokenSettings().get_headers()
+        response = session.get("https://moratest.magenta.dk/service/o/")
+        response.raise_for_status()
+        print(response.json())
+        ```
+    """
+
     client_id: str = "mo"
     client_secret: Optional[str]  # in the future, this should be required
     auth_realm: str = "mo"
@@ -49,22 +64,22 @@ class TokenSettings(BaseSettings):
 
     @root_validator
     def validate_settings(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        """Validate token settings by checking that either client_secret,
-        SAML token, or both exist.
-        This validation occurs when TokenSettings are initialised and does
+        """Validate token settings by checking that either `client_secret`,
+        `saml_token`, or both exist.
+
+        This validation occurs when `TokenSettings` are initialized and does
         not mutate values.
 
         Args:
-            values (Dict[str, Any]): Initialised TokenSettings values.
+            values: Initialized `TokenSettings` values.
 
-        Emits:
-            UserWarning: If none of CLIENT_SECRET or SAML_TOKEN are given
+        Raises:
+            UserWarning: If none of `CLIENT_SECRET` or `SAML_TOKEN` are given
                 during initialisation.
-            PendingDeprecationWarning: If SAML_TOKEN is used.
-
+            PendingDeprecationWarning: If `SAML_TOKEN` is used.
 
         Returns:
-            Dict[str, Any]: TokenSettings values, unchanged.
+            `TokenSettings` values, unmodified.
         """
 
         keycloak, saml = values.get("client_secret"), values.get("saml_token")
@@ -87,7 +102,7 @@ class TokenSettings(BaseSettings):
                 the authentication server raises an error.
 
         Returns:
-            Tuple[float, str]: Token expiry and token.
+            Tuple of token-expiry time in seconds and the token itself.
         """
         token_url = (
             f"{self.auth_server}/realms/{self.auth_realm}/protocol/openid-connect/token"
@@ -112,8 +127,14 @@ class TokenSettings(BaseSettings):
     def _fetch_bearer(self) -> str:
         """Fetch a Keycloak bearer token.
 
+        Automatically refetches the token after it expires.
+
+        Raises:
+            AuthError: If no client secret is given or the response from
+                the authentication server raises an error.
+
         Returns:
-            str: Bearer token.
+            The Bearer token itself.
         """
         expires, token = self._fetch_keycloak_token()
         if expires < time.monotonic():
@@ -123,12 +144,19 @@ class TokenSettings(BaseSettings):
 
     def get_headers(self) -> Dict[str, str]:
         """Get authorization headers based on configured tokens.
-        If a client secret and a SAML token are both configured,
-        they will both exist in the header with keys "Authorization"
-        and "Session", respectively.
+
+        If both a client secret and a SAML token are configured,
+        they will both exist in the headers dict, with their respective keys:
+
+        * `Authorization: Bearer ${TOKEN}`, and
+        * `Session: ${TOKEN}`
+
+        Raises:
+            AuthError: If `client_secret` is given, but the response from the
+                authentication server raises an error.
 
         Returns:
-            Dict[str, str]: Header dictionary.
+            Header dictionary.
         """
         headers: Dict[str, str] = {}
         if self.saml_token:
@@ -136,7 +164,3 @@ class TokenSettings(BaseSettings):
         if self.client_secret:
             headers["Authorization"] = self._fetch_bearer()
         return headers
-
-
-if __name__ == "__main__":
-    pass

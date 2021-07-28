@@ -10,6 +10,35 @@ import hypothesis.strategies as st
 from hypothesis import given
 
 from ra_utils.apply import apply
+from ra_utils.apply import has_self_arg
+
+
+class Classy:
+    def method(self):
+        pass
+
+    @classmethod
+    def classmethod(cls):
+        pass
+
+    @staticmethod
+    def staticmethod():
+        pass
+
+
+def function():
+    pass
+
+
+def test_has_self_arg():
+    classy = Classy()
+    assert has_self_arg(classy.method) is False
+    assert has_self_arg(classy.classmethod) is False
+    assert has_self_arg(classy.staticmethod) is False
+    assert has_self_arg(Classy.method) is True
+    assert has_self_arg(Classy.classmethod) is False
+    assert has_self_arg(Classy.staticmethod) is False
+    assert has_self_arg(function) is False
 
 
 @apply

@@ -16,30 +16,33 @@ from typing import Union
 def catchtime(
     include_process_time: bool = False,
 ) -> Iterator[Union[Callable[[], float], Callable[[], Tuple[float, float]]]]:
-    """Measure time spend within the contextmanager.
+    """Measure time spent within the contextmanager.
 
-    Usage:
-
+    Example:
+        ```Python
         with catchtime() as t:
             time.sleep(1)
         time_spent = t()
-        print(time_spent)  # --> Prints 1.0...
+        print(time_spent)  # --> Prints 1.0
 
         with catchtime(True) as t:
             time.sleep(1)
         time_spent, process_time = t()
-        print(time_spent)  # --> Prints 1.0...
-        print(process_time)  # --> Prints 0.0...
+        print(time_spent)  # --> Prints 1.0
+        print(process_time)  # --> Prints 0.0, as no CPU time has elapsed
+        ```
 
     Args:
-        include_process_time (bool):
+        include_process_time:
             Whether to include process-time or solely real-time in result.
 
     Returns:
-        Callable: That takes no arguments and return either:
-            a single float: realtime, or
-            a tuple (real-time, process-time)
-            Depending on the provided argument.
+        A callable takes no arguments and return either:
+
+        * a single float: realtime, or
+        * a tuple (real-time, process-time)
+
+        Depending on the provided `include_process_time` argument.
     """
     real_start = perf_counter()
     process_start = process_time()

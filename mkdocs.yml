@@ -1,0 +1,62 @@
+site_name: RA Utils
+site_url: ""
+use_directory_urls: False
+site_description: Various utilities for OS2mo and friends
+repo_name: ra-utils
+# TODO: Use the GitHub repo when it's ready
+repo_url: https://git.magenta.dk/rammearkitektur/ra-utils
+
+nav:
+  - index.md
+  - Modules:
+    - apply: modules/apply.md
+    - async_to_sync: modules/async_to_sync.md
+    - attrdict: modules/attrdict.md
+    - catchtime: modules/catchtime.md
+    - deprecation: modules/deprecation.md
+    - generate_uuid: modules/generate_uuid.md
+    - headers: modules/headers.md
+    - jinja_filter: modules/jinja_filter.md
+    - lazy_dict: modules/lazy_dict.md
+    - load_settings: modules/load_settings.md
+    - multiple_replace: modules/multiple_replace.md
+    - semantic_version_type: modules/semantic_version_type.md
+    - strategies: modules/strategies.md
+    - transpose_dict: modules/transpose_dict.md
+
+theme:
+  name: "material"
+  palette:
+    - scheme:
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/weather-sunny
+  features:
+    - navigation.instant
+    - navigation.tracking
+
+
+# Adds Magenta's colour scheme
+extra_css:
+  - stylesheets/extra.css
+
+plugins:
+  - search
+  - autorefs
+  - mkdocstrings:
+      handlers:
+        python:
+          selection:
+            docstring_options:
+              replace_admonitions: no
+      watch:
+        - ra_utils
+        - tests
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.inlinehilite

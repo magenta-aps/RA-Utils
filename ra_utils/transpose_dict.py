@@ -15,18 +15,44 @@ DictValueType = TypeVar("DictValueType")
 def transpose_dict(
     mydict: Dict[DictKeyType, DictValueType]
 ) -> Dict[DictValueType, List[DictKeyType]]:
-    """Switches values in a dict to keys, with a list of the old keys as new values.
+    """Transpose a dictionary, such that keys become values and values become keys.
 
-    >>> test_dict = {'test_key1': 'test_value1'}
-    >>> transpose_dict(test_dict)
-    {'test_value1': ['test_key1']}
+    **XXX: Currently broken, awaiting fix:
+        <a href="https://git.magenta.dk/rammearkitektur/ra-utils/-/merge_requests/8">
+            MR
+        </a>
+    **
 
-    >>> test_dict = {
-    ... 'test_key1': 'test_value1',
-    ... 'test_key2': 'test_value2',
-    ... 'test_key3': 'test_value1'}
-    >>> transpose_dict(test_dict)
-    {'test_value1': ['test_key1', 'test_key3'], 'test_value2': ['test_key2']}
+    *Note: Keys actually become a list of values, rather than plain values, as value
+           uniqueness is not guaranteed, and thus multiple keys may have the same
+           value.*
+
+    Example:
+        ```Python
+        test_dict = {'test_key1': 'test_value1'}
+        tdict = transpose_dict(test_dict)
+        assert tdict == {"test_value1": ["test_key1"]}
+        ```
+
+    Example:
+        ```Python
+        test_dict = {
+            "test_key1": "test_value1",
+            "test_key2": "test_value2",
+            "test_key3": "test_value1",
+        }
+        tdict = transpose_dict(test_dict)
+        assert tdict == {
+            "test_value1": ["test_key1", "test_key3"],
+            "test_value2": ["test_key2"]
+        }
+        ```
+
+    Args:
+        mydict: Dictionary to be transposed.
+
+    Returns:
+        Tranposed dictionary.
     """
     reversed_dict = defaultdict(list)
     for key, value in mydict.items():

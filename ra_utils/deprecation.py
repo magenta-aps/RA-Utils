@@ -11,7 +11,24 @@ from typing import Optional
 
 
 def deprecated(func: Callable) -> Callable:
-    """Mark the decorated function as deprecated."""
+    """Function decorator to mark a function as deprecated.
+
+    Example:
+        ```Python
+        @deprecated
+        def old_function():
+            pass
+
+        old_function()
+        # <stdin>:1: DeprecationWarning: Call to deprecated function func.
+        ```
+
+    Args:
+        func: The function to mark as deprecated.
+
+    Returns:
+        The function which emits warnings when used.
+    """
 
     @wraps(func)
     def new_func(*args: Any, **kwargs: Optional[Any]) -> Any:

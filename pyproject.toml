@@ -27,6 +27,8 @@ pre-commit = "^2.12.1"
 parameterized = "^0.8.1"
 hypothesis = "^6.13.1"
 pytest-cov = "^2.12.1"
+mkdocs-material = "^7.2.1"
+mkdocstrings = "^0.15.2"
 
 [tool.poetry.extras]
 jinja = ["Jinja2"]

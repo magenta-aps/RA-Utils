@@ -14,18 +14,20 @@ from typing import Dict
 
 @lru_cache(maxsize=None)
 def load_settings() -> Dict[str, Any]:
-    """Load settings file from settings/settings.json.
+    """Load settings file from `settings/settings.json`.
 
-    This function is in-memory cached using lru_cache, such that the underlying file
-    is only read and parsed once, thus if the settings file is written to / updated
-    after a program has called this function once, it will not return the new values.
+    *Note: This function is in-memory cached using `lru_cache`, such that the
+           underlying file is only read and parsed once, thus if the settings file is
+           written to or updated after a program has called this function once, it
+           will not return the new values.*
 
-    If this is needed, the cache must first be invalidated using a call to clear_cache:
-
-        load_setings.clear_cache()
+    If a refresh or reload is needed, the cache must first be invalidated:
+    ```Python
+    load_settings.clear_cache()
+    ```
 
     Returns:
-        json: The parsed settings file.
+        The parsed `settings.json` file as a dictionary.
     """
     cwd = Path().cwd().absolute()
     settings_path = cwd / "settings" / "settings.json"
@@ -33,7 +35,15 @@ def load_settings() -> Dict[str, Any]:
         return cast(Dict[str, Any], json.load(settings_file))
 
 
-read_setting_sentinel = object()
+class Sentinel:
+    def __str__(self) -> str:
+        return "sentinel"
+
+    def __repr__(self) -> str:
+        return "sentinel"
+
+
+read_setting_sentinel = Sentinel()
 
 
 def load_setting(
@@ -41,11 +51,43 @@ def load_setting(
 ) -> Callable[[], Any]:
     """Load a single setting, defaulting to 'default' if not present
 
-    This function is mainly for use as defaults in click or similar, hence why it is
+    This function is mainly for use as defaults in `click` or similar, hence why it is
     lazily evaluated.
 
+    Example:
+        With `settings.json` containing:
+        ```Json
+        {"a": 1}
+        ```
+        ```Python
+        lazy_func = load_setting("a")
+        assert lazy_func() == 1
+        ```
+
+    Example:
+        ```Python
+        import click
+        from ra_utils.load_settings import load_setting
+
+        @click.command()
+        @click.option(
+            "--mora-base",
+            default=load_setting("mora.base", "http://localhost:5000"),
+            help="URL for OS2mo.",
+        )
+        def main(mora_base: str):
+            ...
+        ```
+
+    Raises:
+        ValueError: If the `setting` is not found and no `default` is set.
+
+    Args:
+        setting: The setting to read from `load_settings`.
+        default: The default value to return, if `setting` is not found.
+
     Returns:
-        func: Function evaluating to the value of the setting or the configured default.
+        A function evaluating to the value of the setting or the configured default.
     """
 
     def inner() -> Any:

@@ -16,6 +16,7 @@ from hypothesis import given
 
 from .utils import any_strategy
 from ra_utils.attrdict import AttrDict
+from ra_utils.attrdict import attrdict
 
 
 def check_status_key(attr_dict: AttrDict, key: str, value: Any) -> None:
@@ -143,3 +144,9 @@ def test_delattr_dynamic(key, value):
     attr_dict = AttrDict({key: value})
     delattr(attr_dict, key)
     assert attr_dict == {}
+
+
+def test_constructor():
+    attr_dict1 = AttrDict({})
+    attr_dict2 = attrdict({})
+    assert attr_dict1 == attr_dict2

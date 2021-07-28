@@ -13,7 +13,7 @@ from typing import Pattern
 def multiple_replace_compile(replacement_dict: Dict[str, str]) -> Pattern:
     """Make a regex pattern for finding all keys in replacement dict.
 
-    Calling this directly with multiple_replace_run allows one to generate the regex
+    Calling this directly with `multiple_replace_run` allows one to generate the regex
     only once, but using it multiple times, which is advantageous for performance.
 
     Args:
@@ -39,15 +39,15 @@ def multiple_replace_run(
 ) -> str:
     """Run a a regex pattern to replace matches.
 
-    Calling this directly with a regex from multiple_replace_compile allows one to
+    Calling this directly with a regex from `multiple_replace_compile` allows one to
     only generate the regex once, but using it multiple times, which is advantageous
     for performance.
 
     Args:
-        pattern: A regex pattern produced by multiple_replace_compile, using the
-            same replacment_dict provided here.
+        pattern: A regex pattern produced by `multiple_replace_compile`, using the
+            same `replacment_dict` provided here.
         replacement_dict: Dictionary of replacements.
-            Keys are replaced with their values.
+            Keys are replaced with their corresponding values.
         string: The string to make replacements in.
 
     Returns:
@@ -62,13 +62,24 @@ def multiple_replace_run(
 def multiple_replace(replacement_dict: Dict[str, str], string: str) -> str:
     """Make multiple replacements in string.
 
+    *Note: Glues together `multiple_replace_compile` and `multiple_replace_run`.*
+
     Example:
-        >>> multiple_replace({"like": "love", "tea": "coffee"}, "I like tea")
-        I love coffee
+        ```Python
+        result = multiple_replace({"like": "love", "tea": "coffee"}, "I like tea")
+        assert result == "I love coffee"
+
+        result = multiple_replace(
+            {"I": "love", "love": "eating", "eating": "spam"},
+            "I love eating"
+        )
+        assert result == "love eating spam"
+        assert result != "spam spam spam"
+        ```
 
     Args:
         replacement_dict: Dictionary of replacements.
-            Keys are replaced with their values.
+            Keys are replaced with their corresponding values.
         string: The string to make replacements in.
 
     Returns:

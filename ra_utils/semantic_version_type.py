@@ -37,6 +37,17 @@ def get_regex() -> Pattern:
 
 
 class SemanticVersion(str):
+    """Pydantic field model for validating semantic versioning.
+
+    See: <a href="https://semver.org/">semver.org</a> for details.
+
+    Example:
+        ```Python
+        version = "1.1.2+meta-valid"
+        SemanticVersion.validate(version)
+        ```
+    """
+
     @classmethod
     def __get_validators__(cls) -> Iterator[Callable]:
         yield cls.validate
@@ -50,6 +61,18 @@ class SemanticVersion(str):
 
     @classmethod
     def validate(cls, v: Any) -> "SemanticVersion":
+        """Validate that `v` is a valid semantic version.
+
+        Args:
+            v: Value to validate against semver regex.
+
+        Raises:
+            TypeError: If `v` is not a string
+            ValueError: If `v` does not match the semver regex.
+
+        Returns:
+            Validated field model.
+        """
         if not isinstance(v, str):
             raise TypeError("string required")
         m = get_regex().fullmatch(v)
@@ -62,4 +85,35 @@ class SemanticVersion(str):
 
 
 class SemanticVersionModel(BaseModel):
+    """Pydantic model for validating semantic versioning.
+
+    See: <a href="https://semver.org/">semver.org</a> for details.
+
+    Example:
+        ```Python
+        version = "1.1.2+meta-valid"
+        SemanticVersionModel(__root__=version)
+        ```
+
+    Example:
+        ```Python
+        schema = SemanticVersionModel.schema()
+        print(json.dumps(schema))
+        ```
+        Which yields:
+        ```Json
+        {
+            "title": "SemanticVersionModel",
+            "description": "...",
+            "pattern": "^(?P<major>0|[1-9]\\d*)...$",
+            "examples": [
+                "0.1.0",
+                "1.0.0-alpha",
+                "1.0.0-alpha+001"
+            ],
+            "type": "string"
+        }
+        ```
+    """
+
     __root__: SemanticVersion

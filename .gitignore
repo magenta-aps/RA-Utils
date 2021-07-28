@@ -3,4 +3,5 @@
 .hypothesis/
 .coverage
 htmlcov/
+site/
 __pycache__

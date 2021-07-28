@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 from ra_utils.load_settings import load_setting
 from ra_utils.load_settings import load_settings
+from ra_utils.load_settings import Sentinel
 
 
 class LoadSettingsTests(TestCase):
@@ -49,3 +50,8 @@ class LoadSettingsTests(TestCase):
         mock_file.side_effect = FileNotFoundError()
         with self.assertRaises(FileNotFoundError):
             load_settings()
+
+    def test_sentinel(self):
+        sentinel = Sentinel()
+        assert str(sentinel) == "sentinel"
+        assert repr(sentinel) == "sentinel"
