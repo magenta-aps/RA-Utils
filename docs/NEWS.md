@@ -23,6 +23,9 @@ SPDX-License-Identifier: MPL-2.0
 * [#44153] Added gitlab PR review tables:
     The ones used by OS2mo were added verbatim.
 
+* [#44153] Added `syncable.Syncable`:
+    A mixin helper class to support synchronized use of async classes.
+
 ### Bug fixes
 
 None *so far*

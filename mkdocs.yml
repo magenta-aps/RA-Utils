@@ -22,6 +22,7 @@ nav:
     - multiple_replace: modules/multiple_replace.md
     - semantic_version_type: modules/semantic_version_type.md
     - strategies: modules/strategies.md
+    - syncable: modules/syncable.md
     - transpose_dict: modules/transpose_dict.md
   - Release History: NEWS.md
 
