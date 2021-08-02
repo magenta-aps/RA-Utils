@@ -38,3 +38,15 @@ class test_generate_uuid(TestCase):
     @given(text(), text())
     def test_generator_output(self, base, value):
         assert generate_uuid(base, value) == uuid_generator(base)(value)
+
+    def test_predictable_outputs(self):
+        gen = uuid_generator("kommune")
+        uuid1 = gen("key1")
+        uuid2 = gen("key2")
+        assert uuid1 == UUID("fd995619-6f00-cf70-2569-b3f578d9c0da")
+        assert uuid2 == UUID("673e80c5-ae64-632e-4a50-fb2f082f8989")
+
+        uuid3 = generate_uuid("kommune", "key3")
+        uuid4 = generate_uuid("kommune", "key4")
+        assert uuid3 == UUID("eda99313-033b-50ee-6485-0b0ba30a5f62")
+        assert uuid4 == UUID("3e4fbcd4-83d4-976c-3838-f077e9b39129")
