@@ -8,6 +8,17 @@ SPDX-License-Identifier: MPL-2.0
 ## In development
 
 ### New features
+
+None *so far*
+
+### Bug fixes
+
+None *so far*
+
+
+## Version 0.4.0, 2021-08-02
+
+### New features
 * [#44153] Added this documentation:
     `NEWS.rst` version file has been crated and back-populated it using the git history.
     A 'pages' deployment step has been added to CI to deploy documentation to Gitlab pages.
@@ -26,9 +37,6 @@ SPDX-License-Identifier: MPL-2.0
 * [#44153] Added `syncable.Syncable`:
     A mixin helper class to support synchronized use of async classes.
 
-### Bug fixes
-
-None *so far*
 
 ## Version 0.3.1, 2021-07-21
 
@@ -44,6 +52,7 @@ None *so far*
     A `pydantic` settings class for obtaining session headers to access OS2mo, supports both `python3-saml` and `Keycloak`.
     This also added `requests` and `types-requests` as optional dependencies.
     Additionally a poetry command to install dependencies for `headers` was also added, such that its dependencies can now be installed using either `ra_utils[all]` or `ra_utils[headers]`.
+
 
 ## Version 0.2.0, 2021-07-06
 
