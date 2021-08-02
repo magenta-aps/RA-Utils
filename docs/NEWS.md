@@ -20,6 +20,9 @@ SPDX-License-Identifier: MPL-2.0
 * [#44153] Marked `transpose_dict.transpose_dict` as broken:
     An issue was detected during the developers day, and a PR is in progress.
 
+* [#44153] Added gitlab PR review tables:
+    The ones used by OS2mo were added verbatim.
+
 ### Bug fixes
 
 None *so far*
