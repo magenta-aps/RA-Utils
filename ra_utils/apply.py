@@ -7,6 +7,7 @@ from functools import wraps
 from inspect import signature
 from typing import Any
 from typing import Callable
+from typing import Dict
 from typing import Tuple
 from typing import TypeVar
 
@@ -56,6 +57,21 @@ def has_self_arg(func: Callable) -> bool:
     return bool(args) and args[0] in ("self")
 
 
+def metadata(metadata: Dict[str, str]) -> Callable:
+    def decorator(func: Callable) -> Callable:
+        metadata_string = "\n??? metadata\n"
+        metadata_string += "| Key | Description |\n"
+        metadata_string += "| --- | ------------|\n"
+        for key, value in metadata.items():
+            metadata_string += "| " + key + " | " + value + " |" + "\n"
+        func.__doc__ = func.__doc__ or ""
+        func.__doc__ += metadata_string
+        return func
+
+    return decorator
+
+
+@metadata({"added_version": "0.1.0", "ticket": "#41332"})
 def apply(func: Callable[..., CallableReturnType]) -> Callable[..., CallableReturnType]:
     """Function decorator to apply tuple to function.
 
