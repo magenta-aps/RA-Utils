@@ -23,6 +23,7 @@ nav:
     - semantic_version_type: modules/semantic_version_type.md
     - strategies: modules/strategies.md
     - transpose_dict: modules/transpose_dict.md
+  - Release History: NEWS.md
 
 theme:
   name: "material"
