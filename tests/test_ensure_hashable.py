@@ -16,6 +16,11 @@ from ra_utils.ensure_hashable import is_hashable
 from ra_utils.ensure_hashable import is_probably_hashable
 
 
+class Unhashable:
+    def __hash__(self):
+        raise TypeError("Not hashable")
+
+
 @pytest.mark.parametrize(
     "check_func,value,hashable",
     [
@@ -37,6 +42,8 @@ from ra_utils.ensure_hashable import is_probably_hashable
         [is_probably_hashable, set(), False],
         [is_probably_hashable, Decimal("sNaN"), True],
         [is_hashable, Decimal("sNaN"), False],
+        [is_probably_hashable, Unhashable(), True],
+        [is_hashable, Unhashable(), False],
     ],
 )
 def test_is_hashable(check_func, value, hashable):
@@ -55,6 +62,13 @@ def test_slice_unhashable(value):
     with pytest.raises(TypeError) as exc_info:
         ensure_hashable(value)
     assert "slice cannot be made hashable" in str(exc_info.value)
+
+
+def test_unhashable_class_unhashable():
+    value = Unhashable()
+    with pytest.raises(TypeError) as exc_info:
+        ensure_hashable(value)
+    assert "is not hashable, please report this!" in str(exc_info.value)
 
 
 def test_signalling_nan_to_quiet_nan():
