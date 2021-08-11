@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 # --------------------------------------------------------------------------------------
 from typing import Dict
-from typing import Tuple
+from typing import List
 from typing import TypeVar
 
 from ra_utils.ensure_hashable import ensure_hashable
@@ -16,14 +16,8 @@ DictValueType = TypeVar("DictValueType")
 
 def transpose_dict(
     dicty: Dict[DictKeyType, DictValueType]
-) -> Dict[DictValueType, Tuple[DictKeyType, ...]]:
+) -> Dict[DictValueType, List[DictKeyType]]:
     """Transpose a dictionary, such that keys become values and values become keys.
-
-    **XXX: Currently broken, awaiting fix:
-        <a href="https://git.magenta.dk/rammearkitektur/ra-utils/-/merge_requests/8">
-            MR
-        </a>
-    **
 
     *Note: Keys actually become a list of values, rather than plain values, as value
            uniqueness is not guaranteed, and thus multiple keys may have the same
@@ -54,13 +48,18 @@ def transpose_dict(
         mydict: Dictionary to be transposed.
 
     Returns:
-        Tranposed dictionary.
+        Transposed dictionary.
+
+        *Note: Some values may be converted to hashable equivalentes using
+               `ensure_hashable` to ensure they can be used as keys.*
     """
 
-    # Ensure all values are hashable
-    hashdict = ensure_hashable(dicty)
     # Reverse the dict
-    reversed_dict: Dict[DictValueType, Tuple[DictKeyType, ...]] = dict()
-    for key, value in hashdict.items():
-        reversed_dict[value] = reversed_dict.get(value, ()) + (key,)
+    reversed_dict: Dict[DictValueType, List[DictKeyType]] = dict()
+    for key, value in dicty.items():
+        # Ensure all new-key (value) is hashable
+        new_key = ensure_hashable(value)
+        reversed_dict[new_key] = reversed_dict.get(new_key, []) + [
+            key,
+        ]
     return reversed_dict
