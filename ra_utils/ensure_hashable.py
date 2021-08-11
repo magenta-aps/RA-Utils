@@ -8,7 +8,12 @@ from decimal import Decimal
 from typing import Any
 
 from ra_utils.dict_map import dict_map
-from ra_utils.frozen_dict import frozendict
+
+_has_frozendict = True
+try:
+    from frozendict import frozendict
+except ImportError:  # pragma: no cover
+    _has_frozendict = False
 
 
 def is_hashable(value: Any) -> bool:
@@ -48,12 +53,15 @@ def ensure_hashable(value: Any) -> Any:
         value: The value to make hashable.
 
     Raises:
+        ValueError: If frozendict is not installed and a dict is provided.
         TypeError: If non-hashable and non-convertable types are provided.
 
     Returns:
         Hashable equivalent of value, i.e. frozenset if value is a set.
     """
     if isinstance(value, dict):
+        if not _has_frozendict:  # pragma: no cover
+            raise ValueError("'frozendict' not installed!")
         value = frozendict(
             dict_map(
                 value,

@@ -45,6 +45,7 @@ print(dual(('k', 'v')))  # --> 'v'
 * <a href="https://pydantic-docs.helpmanual.io/" class="external-link" target="_blank">Pydantic</a>
 * <a href="https://docs.python-requests.org/" class="external-link" target="_blank">Requests</a>
 * <a href="https://github.com/python/typeshed" class="external-link" target="_blank">Typeshed (types-requests)</a>
+* <a href="https://github.com/Marco-Sulla/python-frozendict" class="external-link" target="_blank">python-frozendict</a>
 
 ## License
 
