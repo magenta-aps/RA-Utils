@@ -14,6 +14,7 @@ nav:
     - attrdict: modules/attrdict.md
     - catchtime: modules/catchtime.md
     - deprecation: modules/deprecation.md
+    - dict_map: modules/dict_map.md
     - generate_uuid: modules/generate_uuid.md
     - headers: modules/headers.md
     - jinja_filter: modules/jinja_filter.md

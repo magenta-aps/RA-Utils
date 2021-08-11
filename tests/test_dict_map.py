@@ -109,14 +109,12 @@ def test_dict_map_destructive_key_interference(key):
         return x.upper()
 
     assume(key != to_upper(key))
-
     dicty = {key: 0, to_upper(key): 1}
-    mapped = dict_map(dicty, key_func=to_upper)
-    assert id(mapped) != id(dicty)
-    assert len(mapped.keys()) == 1
-    assert len(mapped.values()) == 1
-    assert len(dicty.keys()) == 2
-    assert len(dicty.values()) == 2
 
-    key_mapped = dict_map_key(to_upper, dicty)
-    assert key_mapped == mapped
+    with pytest.raises(ValueError) as exc_info:
+        dict_map(dicty, key_func=to_upper)
+    assert "Provided `key_func` is non-bijective" in str(exc_info.value)
+
+    with pytest.raises(ValueError) as exc_info:
+        dict_map_key(to_upper, dicty)
+    assert "Provided `key_func` is non-bijective" in str(exc_info.value)
