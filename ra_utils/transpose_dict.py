@@ -45,7 +45,7 @@ def transpose_dict(
         ```
 
     Args:
-        mydict: Dictionary to be transposed.
+        dicty: Dictionary to be transposed.
 
     Returns:
         Transposed dictionary.
