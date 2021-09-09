@@ -3,4 +3,6 @@
 # SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
 # --------------------------------------------------------------------------------------
-__version__ = "0.4.0"
+from .semantic_version_type import SemanticVersion
+
+__version__: SemanticVersion = SemanticVersion("0.4.0")
