@@ -59,6 +59,9 @@ class TokenSettings(BaseSettings):
     auth_server: AnyHttpUrl = Field("http://localhost:8081/auth")
     saml_token: Optional[str]  # deprecate when fully on keycloak?
 
+    # Re-new token this many seconds before it actually expires
+    oidc_token_lifespan_offset: int = 30
+
     class Config:
         frozen = True
 
@@ -124,10 +127,14 @@ class TokenSettings(BaseSettings):
         token: str = response_payload["access_token"]
         return time.monotonic() + float(expires), token
 
-    def _fetch_bearer(self) -> str:
+    def _fetch_bearer(self, force: bool = False, logger: Any = None) -> str:
         """Fetch a Keycloak bearer token.
 
         Automatically refetches the token after it expires.
+
+        Args:
+            force: always refresh token if true
+            logger: logger used for logging token refresh info
 
         Raises:
             AuthError: If no client secret is given or the response from
@@ -137,12 +144,14 @@ class TokenSettings(BaseSettings):
             The Bearer token itself.
         """
         expires, token = self._fetch_keycloak_token()
-        if expires < time.monotonic():
+        if force or expires - self.oidc_token_lifespan_offset < time.monotonic():
             self._fetch_keycloak_token.cache_clear()
-            _, token = self._fetch_keycloak_token()
+            expires, token = self._fetch_keycloak_token()
+            if logger:
+                logger.debug("New token fetched", expires=expires, token=token)
         return "Bearer " + token
 
-    def get_headers(self) -> Dict[str, str]:
+    def get_headers(self, force: bool = False, logger: Any = None) -> Dict[str, str]:
         """Get authorization headers based on configured tokens.
 
         If both a client secret and a SAML token are configured,
@@ -150,6 +159,10 @@ class TokenSettings(BaseSettings):
 
         * `Authorization: Bearer ${TOKEN}`, and
         * `Session: ${TOKEN}`
+
+        Args:
+            force: always refresh token if true
+            logger: logger used for logging token refresh info
 
         Raises:
             AuthError: If `client_secret` is given, but the response from the
@@ -162,5 +175,5 @@ class TokenSettings(BaseSettings):
         if self.saml_token:
             headers["Session"] = self.saml_token
         if self.client_secret:
-            headers["Authorization"] = self._fetch_bearer()
+            headers["Authorization"] = self._fetch_bearer(force, logger)
         return headers

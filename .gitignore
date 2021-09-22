@@ -5,3 +5,6 @@
 htmlcov/
 site/
 __pycache__
+
+# PyCharm
+.idea

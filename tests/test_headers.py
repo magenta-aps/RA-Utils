@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------
 import time
 from datetime import timedelta
+from logging import getLogger
 
 import pytest
 import requests
@@ -35,6 +36,17 @@ pytestmark = pytest.mark.skipif(no_deps, reason="Header dependencies not install
 # --------------------------------------------------------------------------------------
 
 
+class MockFetchKeycloakToken:
+    def __init__(self, expires: int):
+        self.expires = expires
+
+    def __call__(self, *args, **kwargs):
+        return self.expires, "dummy token"
+
+    def cache_clear(self):
+        pass
+
+
 class MockResponse:
     def __init__(self, response_dict, raise_msg="") -> None:
         self.response = response_dict
@@ -46,8 +58,6 @@ class MockResponse:
     def raise_for_status(self):
         if self.raise_msg:
             raise requests.RequestException(self.raise_msg)
-        else:
-            pass
 
 
 def test_init(monkeypatch):
@@ -122,7 +132,9 @@ def test_fetch_bearer(t_delta: timedelta):
 
 @pytest.mark.filterwarnings("ignore: Using SAML tokens")
 def test_get_headers(monkeypatch):
-    monkeypatch.setattr(TokenSettings, "_fetch_bearer", lambda _: "Bearer token")
+    monkeypatch.setattr(
+        TokenSettings, "_fetch_bearer", lambda self, force, logger: "Bearer token"
+    )
     monkeypatch.setenv("CLIENT_SECRET", "test secret")
     settings = TokenSettings()
     headers = settings.get_headers()
@@ -133,3 +145,63 @@ def test_get_headers(monkeypatch):
     headers = settings.get_headers()
     assert "Session" in headers
     assert "test token" in headers.values()
+
+
+def test_logger_called(monkeypatch, mocker):
+    monkeypatch.setenv("CLIENT_SECRET", "test secret")
+    monkeypatch.setattr(
+        TokenSettings, "_fetch_keycloak_token", MockFetchKeycloakToken(-1)
+    )
+    logger = getLogger("mock_logger")
+    spy = mocker.spy(logger, "debug")
+
+    settings = TokenSettings()
+    settings._fetch_bearer(logger=logger)
+
+    spy.assert_called_once_with("New token fetched", expires=-1, token="dummy token")
+
+
+# Test token renewal mechanism with respect to token expiration
+
+
+def _setup_token_lifespan_test(monkeypatch, mocker, monotonic_time, spy_function):
+    monkeypatch.setattr(
+        TokenSettings, "_fetch_keycloak_token", MockFetchKeycloakToken(400)
+    )
+    monkeypatch.setattr("time.monotonic", lambda: monotonic_time)
+
+    logger = getLogger("mock_logger")
+    spy = mocker.spy(logger, "debug")
+
+    settings = TokenSettings()
+    settings._fetch_bearer(logger=logger)
+
+    spy_method = getattr(spy, spy_function)
+    spy_method()
+
+
+def test_renew_token_when_actual_expiration_time_passed(monkeypatch, mocker):
+    _setup_token_lifespan_test(monkeypatch, mocker, 500.0, "assert_called_once")
+
+
+def test_renew_token_when_offset_expiration_time_passed(monkeypatch, mocker):
+    _setup_token_lifespan_test(monkeypatch, mocker, 380.0, "assert_called_once")
+
+
+def test_do_not_renew_token_when_offset_expiration_time_not_passed(monkeypatch, mocker):
+    _setup_token_lifespan_test(monkeypatch, mocker, 360.0, "assert_not_called")
+
+
+def test_force_token_renewal(monkeypatch, mocker):
+    monkeypatch.setenv("CLIENT_SECRET", "test secret")
+    monkeypatch.setattr(
+        TokenSettings, "_fetch_keycloak_token", MockFetchKeycloakToken(-1)
+    )
+
+    logger = getLogger("mock_logger")
+    spy = mocker.spy(logger, "debug")
+
+    settings = TokenSettings()
+    settings._fetch_bearer(force=True, logger=logger)
+
+    spy.assert_called_once()
