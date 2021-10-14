@@ -10,20 +10,27 @@ from prometheus_client import Gauge
 from prometheus_client import push_to_gateway
 
 
-def export_metrics(metrics: dict) -> None:
-    """Write metric from a dict to pushgateway"""
-    for job, value in metrics.items():
-        export_metric(job, value)
+class MetricExporter:
+    def __init__(self, metric_name: str, description: str, pushgateway_host: str):
+        self.metric_name = metric_name
+        self.description = description
+        self.pushgateway_host = pushgateway_host
 
+    def export_metrics(self, metrics: dict) -> None:
+        """Write metrics from a dict to pushgateway"""
+        for job, value in metrics.items():
+            self.export_metric(job, value)
 
-def export_metric(job: str, value: int) -> None:
-    """Write a single metric to pushgateway"""
-    registry = CollectorRegistry()
-    g = Gauge("os2mint", "OS2MO integration metric", registry=registry)
-    g.set(value)
-    # TODO: Consider changing to read from settings
-    push_to_gateway("localhost:9091", job=job, registry=registry)
+    def export_metric(self, job: str, value: int) -> None:
+        """Write a single metric to pushgateway"""
+        registry = CollectorRegistry()
+        g = Gauge(self.metric_name, self.description, registry=registry)
+        g.set(value)
+        push_to_gateway(self.pushgateway_host, job=job, registry=registry)
 
 
 if __name__ == "__main__":
-    export_metric("test", 1)
+    exporter = MetricExporter(
+        "example_metric", "This is just an example", "localhost:9091"
+    )
+    exporter.export_metric("test", 1)
