@@ -93,7 +93,7 @@ def load_setting(
     def inner() -> Any:
         value = load_settings().get(setting, default)
         if value == read_setting_sentinel:
-            raise ValueError("Not in settings file and no default")
+            raise ValueError(f"{setting} not in settings file and no default")
         return value
 
     return inner
