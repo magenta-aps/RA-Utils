@@ -5,9 +5,12 @@
 # --------------------------------------------------------------------------------------
 # Inspired by:
 # https://github.com/prometheus/client_python#exporting-to-a-pushgateway
-from prometheus_client import CollectorRegistry
-from prometheus_client import Gauge
-from prometheus_client import push_to_gateway
+try:
+    from prometheus_client import CollectorRegistry
+    from prometheus_client import Gauge
+    from prometheus_client import push_to_gateway
+except ImportError:  # pragma: no cover
+    raise ImportError("Optional dependency prometheus_client is not installed")
 
 
 class MetricExporter:
