@@ -56,7 +56,7 @@ class TokenSettings(BaseSettings):
     client_id: str = "mo"
     client_secret: Optional[str]  # in the future, this should be required
     auth_realm: str = "mo"
-    auth_server: AnyHttpUrl = Field("http://localhost:8081/auth")
+    auth_server: AnyHttpUrl = Field("http://localhost:8090/auth")
     saml_token: Optional[str]  # deprecate when fully on keycloak?
 
     # Re-new token this many seconds before it actually expires
