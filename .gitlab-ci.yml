@@ -16,12 +16,18 @@ cache:
 stages:
   - lint
   - test
+  - release
   - deploy
 
 workflow:
   rules:
     - if: '$CI_COMMIT_BRANCH'
     - if: '$CI_COMMIT_TAG'
+
+include:
+  - project: 'labs/salt-automation'
+    ref: 'master'
+    file: '/gitlab-ci-templates/common/autopub.v1.yml'
 
 # ---------------------------------------------------------------------------
 # Templates
