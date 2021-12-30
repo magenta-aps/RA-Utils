@@ -37,8 +37,9 @@ mkdocstrings = "^0.15.2"
 jinja = ["Jinja2"]
 pydantic = ["pydantic"]
 frozendict = ["frozendict"]
+prometheus-client = ["prometheus-client"]
 headers = ["pydantic", "requests", "types-requests"]
-all = ["Jinja2", "pydantic", "requests", "types-requests", "frozendict"]
+all = ["Jinja2", "pydantic", "requests", "types-requests", "frozendict", "prometheus-client"]
 
 [tool.autopub]
 git-username = "MagentaBot"
