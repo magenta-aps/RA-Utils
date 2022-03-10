@@ -7,6 +7,7 @@ from unittest import TestCase
 from unittest.mock import mock_open
 from unittest.mock import patch
 
+from ra_utils.load_settings import _JSON_SETTINGS_PATH
 from ra_utils.load_settings import load_setting
 from ra_utils.load_settings import load_settings
 from ra_utils.load_settings import Sentinel
@@ -55,3 +56,18 @@ class LoadSettingsTests(TestCase):
         sentinel = Sentinel()
         assert str(sentinel) == "sentinel"
         assert repr(sentinel) == "sentinel"
+
+    @patch("ra_utils.load_settings.json.load")
+    @patch("ra_utils.load_settings.Path.exists")
+    @patch("builtins.open")
+    def test_use_default_settings_path_if_cwd_path_does_not_exists(
+        self, mock_open, mock_path_exists, mock_json_load
+    ):
+        # Arrange
+        mock_path_exists.return_value = False
+
+        # Act
+        load_settings()
+
+        # Assert
+        mock_open.assert_called_once_with(_JSON_SETTINGS_PATH, "r")
