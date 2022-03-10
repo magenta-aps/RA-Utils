@@ -11,6 +11,9 @@ from typing import Callable
 from typing import cast
 from typing import Dict
 
+# This path is now used on all (non-K8S) servers
+_JSON_SETTINGS_PATH = "/opt/dipex/os2mo-data-import-and-export/settings/settings.json"
+
 
 @lru_cache(maxsize=None)
 def load_settings() -> Dict[str, Any]:
@@ -31,6 +34,10 @@ def load_settings() -> Dict[str, Any]:
     """
     cwd = Path().cwd().absolute()
     settings_path = cwd / "settings" / "settings.json"
+
+    if not Path(settings_path).exists():
+        settings_path = Path(_JSON_SETTINGS_PATH)
+
     with open(str(settings_path), "r") as settings_file:
         return cast(Dict[str, Any], json.load(settings_file))
 
