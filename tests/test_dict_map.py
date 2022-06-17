@@ -21,7 +21,7 @@ def swapcase(x):
 
 
 def pow2(x):
-    return x ** 2
+    return x**2
 
 
 @pytest.mark.parametrize(
