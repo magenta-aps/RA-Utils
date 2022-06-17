@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.1.0 - 2022-06-17
+------------------
+
+[#xxxxx] Adds sentry_init function to allow easy setup of sentry in python programs
+
 1.0.0 - 2022-03-14
 ------------------
 
