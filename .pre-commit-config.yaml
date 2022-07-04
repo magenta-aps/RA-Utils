@@ -18,9 +18,9 @@ repos:
     rev: v0.812
     hooks:
       - id: mypy
-        language: system
-        types: [file, python]
-  
+        additional_dependencies:
+          - types-frozendict
+
   - repo: https://github.com/fsfe/reuse-tool
     rev: v0.12.1
     hooks:
