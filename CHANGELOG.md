@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.2.0 - 2022-07-04
+------------------
+
+[#48869] Introduce with_concurrency decorator and gather_with_concurrency function.
+
 1.1.0 - 2022-06-17
 ------------------
 
