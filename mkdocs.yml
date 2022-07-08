@@ -11,6 +11,7 @@ nav:
   - Modules:
     - apply: modules/apply.md
     - async_to_sync: modules/async_to_sync.md
+    - asyncio_utils: modules/asyncio_utils.md
     - attrdict: modules/attrdict.md
     - catchtime: modules/catchtime.md
     - deprecation: modules/deprecation.md
@@ -23,6 +24,7 @@ nav:
     - load_settings: modules/load_settings.md
     - multiple_replace: modules/multiple_replace.md
     - semantic_version_type: modules/semantic_version_type.md
+    - snetry_init: modules/sentry_init.md
     - strategies: modules/strategies.md
     - syncable: modules/syncable.md
     - transpose_dict: modules/transpose_dict.md
