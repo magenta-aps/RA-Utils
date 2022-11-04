@@ -22,6 +22,7 @@ nav:
     - jinja_filter: modules/jinja_filter.md
     - lazy_dict: modules/lazy_dict.md
     - load_settings: modules/load_settings.md
+    - job_settings: modules/job_settings.md
     - multiple_replace: modules/multiple_replace.md
     - semantic_version_type: modules/semantic_version_type.md
     - snetry_init: modules/sentry_init.md
