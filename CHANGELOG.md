@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.3.2 - 2022-11-04
+------------------
+
+[#xxxxx] downgrade structlog to allow dipex to use this
+
 1.3.1 - 2022-11-04
 ------------------
 
