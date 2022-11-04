@@ -28,6 +28,9 @@ include:
   - project: 'labs/salt-automation'
     ref: 'master'
     file: '/gitlab-ci-templates/common/autopub.v1.yml'
+  - project: 'labs/salt-automation'
+    ref: 'master'
+    file: '/gitlab-ci-templates/python/pypi.v1.yml'
 
 # ---------------------------------------------------------------------------
 # Templates
@@ -83,14 +86,6 @@ Test on Python 3.8:
 Test on Python 3.9:
   <<: *test
   image: python:3.9
-
-# ---------------------------------------------------------------------------
-# Deploy
-# ---------------------------------------------------------------------------
-Deploy to PyPI:
-  <<: *deploy
-  script: poetry publish --build -u OS2mo -p $PYPI_PWD
-
 
 pages:
   <<: *install-deps
