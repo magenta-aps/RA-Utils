@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.3.0 - 2022-11-04
+------------------
+
+[#53219] Add `JobSettings` base class for defining settings of an OS2MO/DIPEX integration.
+
 1.2.1 - 2022-09-16
 ------------------
 
