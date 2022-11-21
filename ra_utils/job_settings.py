@@ -7,6 +7,7 @@ from enum import Enum
 from typing import Any
 from typing import Dict
 from typing import Tuple
+from uuid import UUID
 
 from pydantic import BaseSettings
 from pydantic import Extra
@@ -92,6 +93,12 @@ class JobSettings(BaseSettings):
     And configure logging according to the settings like this:
     >>> settings.start_logging_based_on_settings()
     """
+
+    mora_base = "http://mo:5000"
+    client_id: str = "dipex"
+    client_secret: UUID
+    auth_realm: str = "mo"
+    auth_server: str = "http://keycloak:8080/auth"
 
     log_level: LogLevel = LogLevel.ERROR
     log_format: str = (
