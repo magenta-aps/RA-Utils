@@ -6,8 +6,8 @@ from enum import auto
 from enum import Enum
 from typing import Any
 from typing import Dict
+from typing import Optional
 from typing import Tuple
-from uuid import UUID
 
 from pydantic import BaseSettings
 from pydantic import Extra
@@ -96,7 +96,7 @@ class JobSettings(BaseSettings):
 
     mora_base = "http://mo:5000"
     client_id: str = "dipex"
-    client_secret: UUID
+    client_secret: Optional[str] = None
     auth_realm: str = "mo"
     auth_server: str = "http://keycloak:8080/auth"
 
