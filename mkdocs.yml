@@ -29,6 +29,7 @@ nav:
     - strategies: modules/strategies.md
     - syncable: modules/syncable.md
     - transpose_dict: modules/transpose_dict.md
+    - tqdm_wrapper: modules/tqdm_wrapper.md
   - Release History: NEWS.md
 
 theme:
