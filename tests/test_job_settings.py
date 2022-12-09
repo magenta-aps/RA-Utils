@@ -74,9 +74,12 @@ def test_python_logging_respects_log_level(caplog, mock_env):
     assert "info" not in caplog.text
 
 
-def test_structlog_logging_respects_log_level(capsys, mock_env):
+@pytest.mark.parametrize("isatty", [True, False])
+def test_structlog_logging_respects_log_level(capsys, mocker, mock_env, isatty):
     # Arrange
     logger = structlog.get_logger()
+    stderr_mock = mocker.patch("ra_utils.job_settings.sys.stderr")
+    stderr_mock.isatty.return_value = isatty
     # Act
     _make_log_output(logger)
     # Assert: only ERROR log lines are present, since the default log level is ERROR
