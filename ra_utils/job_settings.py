@@ -6,9 +6,11 @@ from enum import auto
 from enum import Enum
 from typing import Any
 from typing import Dict
+from typing import List
 from typing import Optional
 from typing import Tuple
 
+import structlog
 from pydantic import BaseSettings
 from pydantic import Extra
 from pydantic.env_settings import SettingsSourceCallable
@@ -131,16 +133,21 @@ class JobSettings(BaseSettings):
             )
 
     def start_logging_based_on_settings(self) -> None:
-        """Configure Python `logging` library according to these integration settings"""
+        """Configure Python `logging` library as well as `structlog` logging according
+        to the specified log level."""
+        self._configure_python_logging()
+        self._configure_structlog_logging()
+
+    def _configure_python_logging(self) -> None:
         # Based on https://stackoverflow.com/a/14058475
 
         # Get root logger and set its log level
         root: logging.Logger = logging.getLogger()
-        root.setLevel(self.log_level)  # type: ignore
+        root.setLevel(self._get_log_level_numeric_value())
 
         # Create handler logging to stdout, and set its log level
         handler: logging.StreamHandler = logging.StreamHandler(sys.stdout)
-        handler.setLevel(self.log_level)  # type: ignore
+        handler.setLevel(self._get_log_level_numeric_value())
 
         # Set the log format of the handler
         formatter: logging.Formatter = logging.Formatter(self.log_format)
@@ -148,3 +155,28 @@ class JobSettings(BaseSettings):
 
         # Add the handler logging to stdout to the root logger
         root.addHandler(handler)
+
+    def _configure_structlog_logging(self) -> None:
+        # Based on: https://www.structlog.org/en/stable/logging-best-practices.html
+
+        shared_processors: List[Any] = []
+        if sys.stderr.isatty():
+            # Pretty printing when we run in a terminal session.
+            # Automatically prints pretty tracebacks when "rich" is installed
+            processors = shared_processors + [structlog.dev.ConsoleRenderer()]
+        else:
+            # Print JSON when we run, e.g., in a Docker container.
+            # Also print structured tracebacks.
+            processors = shared_processors + [structlog.processors.JSONRenderer()]
+
+        structlog.configure(
+            processors,
+            # Only log `structlog` output at the configured log level, or higher
+            wrapper_class=structlog.make_filtering_bound_logger(
+                self._get_log_level_numeric_value()
+            ),
+        )
+
+    def _get_log_level_numeric_value(self) -> int:
+        reverse_mapping = {value: key for key, value in logging._levelToName.items()}
+        return reverse_mapping[str(self.log_level)]

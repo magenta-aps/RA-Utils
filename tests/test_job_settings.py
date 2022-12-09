@@ -7,6 +7,7 @@ from unittest.mock import patch
 from uuid import uuid4
 
 import pytest
+import structlog
 
 from ra_utils.job_settings import JobSettings
 from ra_utils.job_settings import LogLevel
@@ -55,16 +56,33 @@ def test_json_settings_source_filters_on_prefix(mock_env):
         assert "b_b" not in settings.dict()
 
 
-def test_start_logging_based_on_settings(caplog, mock_env):
-    # Arrange
-    logger = logging.getLogger(__name__)
+def _make_log_output(logger):
     with _mock_settings(return_value={}):
         settings: _ExampleSettings = _ExampleSettings()
-        # Act: set up logging and make logging calls
         settings.start_logging_based_on_settings()
         logger.info("info")
         logger.error("error")
 
+
+def test_python_logging_respects_log_level(caplog, mock_env):
+    # Arrange
+    logger = logging.getLogger(__name__)
+    # Act
+    _make_log_output(logger)
     # Assert: only ERROR log lines are present, since the default log level is ERROR
     assert "error" in caplog.text
     assert "info" not in caplog.text
+
+
+@pytest.mark.parametrize("isatty", [True, False])
+def test_structlog_logging_respects_log_level(capsys, mocker, mock_env, isatty):
+    # Arrange
+    logger = structlog.get_logger()
+    stderr_mock = mocker.patch("ra_utils.job_settings.sys.stderr")
+    stderr_mock.isatty.return_value = isatty
+    # Act
+    _make_log_output(logger)
+    # Assert: only ERROR log lines are present, since the default log level is ERROR
+    stdout = capsys.readouterr().out
+    assert "error" in stdout
+    assert "info" not in stdout
