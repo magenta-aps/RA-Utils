@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.6.0 - 2022-12-12
+------------------
+
+[#54135] Configure `structlog` in `JobSettings.start_logging_based_on_settings`
+
 1.5.0 - 2022-12-02
 ------------------
 
