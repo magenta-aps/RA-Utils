@@ -21,6 +21,7 @@ repos:
         additional_dependencies:
           - types-frozendict
           - types-requests
+        args: [--python-version=3.10]
 
   - repo: https://github.com/fsfe/reuse-tool
     rev: v0.12.1
