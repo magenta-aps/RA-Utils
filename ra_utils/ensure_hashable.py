@@ -1,7 +1,5 @@
-# --------------------------------------------------------------------------------------
 # SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
-# --------------------------------------------------------------------------------------
 from collections.abc import Hashable
 from decimal import Decimal
 from typing import Any

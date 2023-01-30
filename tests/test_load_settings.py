@@ -1,7 +1,5 @@
-# --------------------------------------------------------------------------------------
 # SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
-# --------------------------------------------------------------------------------------
 from unittest import TestCase
 from unittest.mock import mock_open
 from unittest.mock import patch
