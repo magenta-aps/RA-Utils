@@ -17,6 +17,7 @@ nav:
     - deprecation: modules/deprecation.md
     - dict_map: modules/dict_map.md
     - ensure_hashable: modules/ensure_hashable.md
+    - ensure_single_run: modules/ensure_single_run.md
     - generate_uuid: modules/generate_uuid.md
     - headers: modules/headers.md
     - jinja_filter: modules/jinja_filter.md
