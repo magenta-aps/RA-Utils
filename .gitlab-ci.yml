@@ -52,7 +52,7 @@ include:
   <<: *install-deps
   needs: []
   stage: test
-  script: poetry run pytest tests/ --cov ra_utils/ --cov-fail-under=100 --hypothesis-show-statistics --hypothesis-profile ci
+  script: poetry run pytest tests/ --cov --cov-fail-under=100 --hypothesis-show-statistics --hypothesis-profile ci
 
 .deploy-template: &deploy
   <<: *install-deps
@@ -86,6 +86,14 @@ Test on Python 3.8:
 Test on Python 3.9:
   <<: *test
   image: python:3.9
+
+Test on Python 3.10:
+  <<: *test
+  image: python:3.10
+
+# Test on Python 3.11:
+#   <<: *test
+#   image: python:3.11
 
 pages:
   <<: *install-deps

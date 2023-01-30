@@ -26,8 +26,9 @@ nav:
     - job_settings: modules/job_settings.md
     - multiple_replace: modules/multiple_replace.md
     - semantic_version_type: modules/semantic_version_type.md
-    - snetry_init: modules/sentry_init.md
+    - sentry_init: modules/sentry_init.md
     - strategies: modules/strategies.md
+    - structured_url: modules/structured_url.md
     - syncable: modules/syncable.md
     - transpose_dict: modules/transpose_dict.md
     - tqdm_wrapper: modules/tqdm_wrapper.md
