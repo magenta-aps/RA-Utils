@@ -1,11 +1,8 @@
 # SPDX-FileCopyrightText: 2022 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
 """Pydantic StructuredUrl model."""
-from functools import wraps
 from typing import Any
-from typing import Callable
-from typing import cast
-from typing import TypeVar
+from typing import Optional
 from urllib.parse import parse_qsl
 from urllib.parse import urlencode
 
@@ -18,29 +15,6 @@ try:
     from pydantic import root_validator
 except ImportError as err:  # pragma: no cover
     raise ImportError(f"{err.name} not found - {__name__} not imported")
-
-
-T = TypeVar("T")
-R = TypeVar("R")
-
-
-def none_early_return(func: Callable[[T], R]) -> Callable[[T | None], R | None]:
-    """Decorate a function to early return 'None' on 'None'."""
-
-    @wraps(func)
-    def wrapper(arg: T | None) -> R | None:
-        return func(arg) if arg is not None else None
-
-    return wrapper
-
-
-opt_int2str = none_early_return(str)
-opt_str2int = none_early_return(int)
-
-opt_urldecode = none_early_return(
-    cast(Callable[[str], dict], lambda qs: dict(parse_qsl(qs)))
-)
-opt_urlencode = none_early_return(urlencode)
 
 
 # pylint: disable=too-few-public-methods
@@ -91,9 +65,9 @@ class StructuredUrl(BaseModel):
             user=values.get("user"),
             password=values.get("password"),
             host=values.get("host"),
-            port=opt_int2str(values.get("port")),
+            port=parse_obj_as(Optional[str], values.get("port")),
             path=values.get("path"),
-            query=opt_urlencode(values.get("query")),
+            query=urlencode(values.get("query", {})),
             fragment=values.get("fragment"),
         )
         values["url"] = parse_obj_as(AnyUrl, uri_string)
@@ -119,9 +93,9 @@ class StructuredUrl(BaseModel):
                 user=url.user,
                 password=url.password,
                 host=url.host,
-                port=opt_str2int(url.port),
+                port=parse_obj_as(Optional[int], url.port),
                 path=url.path,
-                query=opt_urldecode(url.query),
+                query=dict(parse_qsl(url.query)),
                 fragment=url.fragment,
             )
         )

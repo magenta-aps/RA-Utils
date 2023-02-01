@@ -1,19 +1,11 @@
 # SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
 from typing import Callable
-from typing import Optional
 
 import pytest
-from hypothesis import given
 
 try:
     from pydantic import ValidationError
-
-    from ra_utils.structured_url import opt_int2str
-    from ra_utils.structured_url import opt_str2int
-
-    from ra_utils.structured_url import opt_urlencode
-    from ra_utils.structured_url import opt_urldecode
 
     from ra_utils.structured_url import StructuredUrl
 
@@ -24,25 +16,6 @@ except:  # pragma: no cover  # noqa: E722
     StructuredUrl = object  # type: ignore
 
     skip_if_missing = pytest.mark.skipif(True, reason="pydantic not installed")
-
-
-@given(...)
-@skip_if_missing
-def test_opt_int2str_str2int_reversible(x: int) -> None:
-    assert opt_str2int(opt_int2str(x)) == x
-    assert opt_int2str(opt_str2int(str(x))) == str(x)
-
-
-@skip_if_missing
-def test_opt_int2str_str2int_reversible_none() -> None:
-    assert opt_str2int(opt_int2str(None)) is None
-    assert opt_int2str(opt_str2int(None)) is None
-
-
-@given(...)
-@skip_if_missing
-def test_opt_urlencode_urldecode_reversible(x: Optional[dict]) -> None:
-    assert opt_urldecode(opt_urlencode(x)) == x
 
 
 def _assert_parsed(structured_url: StructuredUrl) -> None:
@@ -107,8 +80,9 @@ def _assert_parsed_minimal(structured_url: StructuredUrl) -> None:
     assert structured_url.scheme == "http"
     assert structured_url.url.host == "a"
     assert structured_url.host == "a"
+    assert structured_url.query == {}
 
-    none_fields = {"user", "password", "port", "path", "query", "fragment"}
+    none_fields = {"user", "password", "port", "path", "fragment"}
     for key in none_fields:
         assert getattr(structured_url.url, key) is None
         assert getattr(structured_url, key) is None
