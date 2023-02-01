@@ -1,11 +1,5 @@
-#!/usr/bin/env python3
-# --------------------------------------------------------------------------------------
 # SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
-# --------------------------------------------------------------------------------------
-# --------------------------------------------------------------------------------------
-# Imports
-# --------------------------------------------------------------------------------------
 import time
 from datetime import timedelta
 from logging import getLogger
@@ -17,9 +11,7 @@ from hypothesis import given
 from hypothesis import strategies as st
 from pytest import MonkeyPatch
 
-# --------------------------------------------------------------------------------------
 # Check if we should skip
-# --------------------------------------------------------------------------------------
 
 no_deps = False
 try:
@@ -29,11 +21,6 @@ except ImportError:
     no_deps = True
 
 pytestmark = pytest.mark.skipif(no_deps, reason="Header dependencies not installed")
-
-
-# --------------------------------------------------------------------------------------
-# Code
-# --------------------------------------------------------------------------------------
 
 
 class MockFetchKeycloakToken:

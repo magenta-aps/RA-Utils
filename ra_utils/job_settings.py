@@ -10,10 +10,14 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 
-import structlog
-from pydantic import BaseSettings
-from pydantic import Extra
-from pydantic.env_settings import SettingsSourceCallable
+try:
+    import structlog
+    from pydantic import BaseSettings
+    from pydantic import Extra
+    from pydantic.env_settings import SettingsSourceCallable
+except ImportError as err:  # pragma: no cover
+    raise ImportError(f"{err.name} not found - {__name__} not imported")
+
 
 from .load_settings import load_settings
 

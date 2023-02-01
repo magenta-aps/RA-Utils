@@ -1,11 +1,5 @@
-#!/usr/bin/env python3
-# --------------------------------------------------------------------------------------
 # SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
-# --------------------------------------------------------------------------------------
-# --------------------------------------------------------------------------------------
-# Imports
-# --------------------------------------------------------------------------------------
 import time
 from functools import lru_cache
 from typing import Any
@@ -25,16 +19,12 @@ except ImportError as err:  # pragma: no cover
     raise ImportError(f"{err.name} not found - token settings not imported")
 
 
-# --------------------------------------------------------------------------------------
 # Exception
-# --------------------------------------------------------------------------------------
 class AuthError(Exception):
     """Raised when errors in authentication occurs."""
 
 
-# --------------------------------------------------------------------------------------
 # Settings
-# --------------------------------------------------------------------------------------
 
 
 class TokenSettings(BaseSettings):

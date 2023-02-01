@@ -1,8 +1,5 @@
-#!/usr/bin/env python3
-# --------------------------------------------------------------------------------------
 # SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
-# --------------------------------------------------------------------------------------
 from asyncio import get_event_loop
 from asyncio import iscoroutinefunction
 from asyncio import new_event_loop
