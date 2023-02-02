@@ -12,13 +12,14 @@ keywords = ["os2mo", "lora"]
 [tool.poetry.dependencies]
 python = "^3.8"
 more-itertools = "^9.0.0"
-Jinja2 = {version = "^3.1.2", optional = true}
-pydantic = {version = "^1.10.2", optional = true}
-requests = {version = "^2.28.1", optional = true}
-sentry-sdk = {version = "^1.12.1", optional = true}
+Jinja2 = { version = "^3.1.2", optional = true }
+pydantic = { version = "^1.10.2", optional = true }
+requests = { version = "^2.28.1", optional = true }
+sentry-sdk = { version = "^1.12.1", optional = true }
 frozendict = "^2.3.4"
 structlog = "^22.3.0"
 tqdm = "^4.64.1"
+prometheus-client = "^0.16.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.1"
@@ -42,9 +43,11 @@ omit = ["ra_utils/structured_url.py"]  # TODO: Remove this on Python 3.10
 jinja = ["Jinja2"]
 pydantic = ["pydantic"]
 frozendict = ["frozendict"]
+prometheus-client = ["prometheus-client"]
 sentry = ["sentry-sdk", "pydantic"]
 headers = ["pydantic", "requests", "types-requests"]
-all = ["Jinja2", "pydantic", "requests", "types-requests", "frozendict", "sentry-sdk"]
+all = ["Jinja2", "pydantic", "requests", "types-requests", "frozendict", "sentry-sdk",
+       "prometheus-client"]
 
 [tool.autopub]
 git-username = "MagentaBot"
