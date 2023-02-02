@@ -388,11 +388,11 @@ testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "pre-commit"
-version = "2.21.0"
+version = "3.0.3"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
 category = "dev"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 
 [package.dependencies]
 cfgv = ">=2.0.0"
@@ -724,7 +724,7 @@ sentry = ["sentry-sdk", "pydantic"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "cc1b169aec8f65180a2efc5398a04fd087bae02ab4b64b71d5dabee62b5ca673"
+content-hash = "a412bb86dcbbc638b5062094279153aef78918dff6c24ebcde2d46fe23ff6258"
 
 [metadata.files]
 attrs = [
@@ -958,8 +958,8 @@ pluggy = [
     {file = "pluggy-1.0.0.tar.gz", hash = "sha256:4224373bacce55f955a878bf9cfa763c1e360858e330072059e10bad68531159"},
 ]
 pre-commit = [
-    {file = "pre_commit-2.21.0-py2.py3-none-any.whl", hash = "sha256:e2f91727039fc39a92f58a588a25b87f936de6567eed4f0e673e0507edc75bad"},
-    {file = "pre_commit-2.21.0.tar.gz", hash = "sha256:31ef31af7e474a8d8995027fefdfcf509b5c913ff31f2015b4ec4beb26a6f658"},
+    {file = "pre_commit-3.0.3-py2.py3-none-any.whl", hash = "sha256:83e2e8cc5cbb3691cff9474494816918d865120768aa36c9eda6185126667d21"},
+    {file = "pre_commit-3.0.3.tar.gz", hash = "sha256:4187e74fda38f0f700256fb2f757774385503b04292047d0899fc913207f314b"},
 ]
 pydantic = [
     {file = "pydantic-1.10.4-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:b5635de53e6686fe7a44b5cf25fcc419a0d5e5c1a1efe73d49d48fe7586db854"},
