@@ -74,6 +74,8 @@ def notify_prometheus(lock_file_name: str, lock_conflict: bool) -> None:
 def ensure_single_run(
     func: typing.Callable,
     lock_name: str,
+    *args: typing.Any,
+    **kwargs: typing.Any,
 ) -> typing.Any:
     """Wrapper function that ensures that no more than a single instance of a function
     is running at any given time. Checks if a lock for the function already exists, and
@@ -102,7 +104,7 @@ def ensure_single_run(
             lock.flush()
 
         try:
-            return_value = func()
+            return_value = func(*args, **kwargs)
         except Exception as e:
             raise e
         finally:
@@ -110,6 +112,6 @@ def ensure_single_run(
             notify_prometheus(lock_file_name=lock_name, lock_conflict=locked)
     else:
         notify_prometheus(lock_file_name=lock_name, lock_conflict=locked)
-        raise LockTaken
+        raise LockTaken(lock_name)
 
     return return_value
