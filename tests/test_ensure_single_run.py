@@ -2,7 +2,10 @@
 # SPDX-License-Identifier: MPL-2.0
 import os
 import unittest
+from unittest.mock import MagicMock
+from unittest.mock import patch
 
+import prometheus_client.exposition
 from parameterized import parameterized
 
 import ra_utils.ensure_single_run as esr
@@ -22,6 +25,24 @@ def lock_test(lock_name: str, lock_content: str):
     os.remove(lock_name)
 
     return locked
+
+
+def compare_reg_content(
+    registry: prometheus_client.CollectorRegistry, expected_locked: bool
+):
+    cmp_str: bytes = (
+        b"# HELP lock_conflict_test_lock Lock conflict, time is from "
+        b"last successful run\n# TYPE lock_conflict_test_lock "
+        b"gauge\nlock_conflict_test_lock 0.0\n"
+    )
+    if expected_locked:
+        cmp_str = (
+            b"# HELP lock_conflict_test_lock Lock conflict, time is from "
+            b"last successful run\n# TYPE lock_conflict_test_lock "
+            b"gauge\nlock_conflict_test_lock 1.0\n"
+        )
+
+    assert prometheus_client.exposition.generate_latest(registry) == cmp_str
 
 
 class TestEnsureSingleRun(unittest.TestCase):
@@ -51,13 +72,18 @@ class TestEnsureSingleRun(unittest.TestCase):
             is expected
         )
 
-    def test_single_run(self):
+    @patch("prometheus_client.exposition.push_to_gateway")
+    def test_single_run(self, mock_gateway: MagicMock):
         retval = esr.ensure_single_run(
             func=self.input_func, lock_name=self.lock_name_global
         )
         assert retval == self.str1
+        mock_gateway.assert_called_once()
+        reg: prometheus_client.CollectorRegistry = mock_gateway.call_args[1]["registry"]
+        compare_reg_content(registry=reg, expected_locked=False)
 
-    def test_multi_run(self):
+    @patch("prometheus_client.exposition.push_to_gateway")
+    def test_multi_run(self, mock_gateway: MagicMock):
         # open( , "x") creates a file, and throws an error if the file already exist.
         # If the file already exists something has gone wrong somewhere as the tests,
         # and code, should always clean up after itself
@@ -71,14 +97,29 @@ class TestEnsureSingleRun(unittest.TestCase):
         assert is_lock_taken(lock_name=self.lock_name_global)
         with self.assertRaises(expected_exception=esr.LockTaken):
             esr.ensure_single_run(func=self.input_func, lock_name=self.lock_name_global)
+
         os.remove(self.lock_name_global)
+        mock_gateway.assert_called_once()
+        reg: prometheus_client.CollectorRegistry = mock_gateway.call_args[1]["registry"]
+        compare_reg_content(registry=reg, expected_locked=True)
 
     # Test that if the input function fails we get the right error back and the
     # lock is cleared
-    def test_error_run(self):
+    @patch("prometheus_client.exposition.push_to_gateway")
+    def test_error_run(self, mock_gateway: MagicMock):
         with self.assertRaises(expected_exception=NotImplementedError):
             esr.ensure_single_run(
                 func=self.input_func_fail, lock_name=self.lock_name_global
             )
 
         assert not esr._is_lock_taken(self.lock_name_global)
+        mock_gateway.assert_called_once()
+        reg: prometheus_client.CollectorRegistry = mock_gateway.call_args[1]["registry"]
+        compare_reg_content(registry=reg, expected_locked=False)
+
+    # Test the teh code runs successfully, even if there is no connection to prometheus
+    def test_no_prometheus_connect(self):
+        retval = esr.ensure_single_run(
+            func=self.input_func, lock_name=self.lock_name_global
+        )
+        assert retval == self.str1

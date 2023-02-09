@@ -2,6 +2,12 @@
 # SPDX-License-Identifier: MPL-2.0
 import os
 import typing
+import urllib.error
+
+import prometheus_client.exposition
+import structlog
+from prometheus_client import CollectorRegistry
+from prometheus_client import Gauge
 
 
 class LockTaken(Exception):
@@ -36,6 +42,35 @@ def _is_lock_taken(lock_name: str) -> bool:
     return locked
 
 
+def notify_prometheus(lock_file_name: str, lock_conflict: bool) -> None:
+    """Used to send metrics to Prometheus
+
+    Args:
+        lock_file_name: The name of the lock file, will become part of the job name
+        lock_conflict: was there a lock conflict or was this a successful run
+    """
+    log = structlog.getLogger()
+    job_name = f"lock_conflict_{lock_file_name}"
+    registry = CollectorRegistry()
+    g = Gauge(
+        name=job_name,
+        documentation="Lock conflict, time is from last successful run",
+        registry=registry,
+    )
+    if not lock_conflict:
+        g.set_to_current_time()
+        g.set(0)
+    else:
+        g.inc(1)
+    try:
+        prometheus_client.exposition.push_to_gateway(
+            gateway="localhost:9091", job=job_name, registry=registry
+        )
+    except urllib.error.URLError as ue:
+        log.warning("Cannot connect to Prometheus")
+        log.warning(ue)
+
+
 def ensure_single_run(
     func: typing.Callable,
     lock_name: str,
@@ -49,10 +84,11 @@ def ensure_single_run(
     The lock file contains the pid of the process which has taken it so that it is
     possible to see if the process is still running
 
+    The wrapper also sends the results to Prometheus
+
     Args:
         func: Function to be wrapped, to ensure that it only runs once
         lock_name: Name of the lock file
-        logger: Logger to be used for output
 
     Returns:
         return_value: the return value of the wrapped function
@@ -71,6 +107,9 @@ def ensure_single_run(
             raise e
         finally:
             os.remove(lock_name)
+            notify_prometheus(lock_file_name=lock_name, lock_conflict=locked)
     else:
+        notify_prometheus(lock_file_name=lock_name, lock_conflict=locked)
         raise LockTaken
+
     return return_value
