@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.9.0 - 2023-02-09
+------------------
+
+[#53496] Added wrapper function to ensure single instance
+
 1.8.0 - 2023-02-01
 ------------------
 
