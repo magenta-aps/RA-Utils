@@ -127,7 +127,7 @@ dev = ["flake8", "markdown", "twine", "wheel"]
 
 [[package]]
 name = "hypothesis"
-version = "6.62.1"
+version = "6.68.0"
 description = "A library for property-based testing"
 category = "dev"
 optional = false
@@ -735,7 +735,7 @@ sentry = ["sentry-sdk", "pydantic"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "4cf98c338ffbc0e98559efe61a2b4a9a4faa75cecd7eb8d4074c5762769ffca0"
+content-hash = "fac7499b338c9ae5fbef52aad1995bbac15290c7ff903db076954254ff9a61e9"
 
 [metadata.files]
 attrs = [
@@ -851,8 +851,8 @@ ghp-import = [
     {file = "ghp_import-2.1.0-py3-none-any.whl", hash = "sha256:8337dd7b50877f163d4c0289bc1f1c7f127550241988d568c1db512c4324a619"},
 ]
 hypothesis = [
-    {file = "hypothesis-6.62.1-py3-none-any.whl", hash = "sha256:d00a4a9c54b0b8b4570fe1abe42395807a973b4a507e6718309800e6f84e160d"},
-    {file = "hypothesis-6.62.1.tar.gz", hash = "sha256:7d1e2f9871e6509662da317adf9b4aabd6b38280fb6c7930aa4f574d2ed25150"},
+    {file = "hypothesis-6.68.0-py3-none-any.whl", hash = "sha256:064a5bf7a98cbdfa3589d8934a2c548524c6d108bfa368ec5ed8b09caa526108"},
+    {file = "hypothesis-6.68.0.tar.gz", hash = "sha256:8cfa1de15271debb2750545a460e58e3e84527d94157f38ab9309826953572f3"},
 ]
 identify = [
     {file = "identify-2.5.10-py2.py3-none-any.whl", hash = "sha256:fb7c2feaeca6976a3ffa31ec3236a6911fbc51aec9acc111de2aed99f244ade2"},
