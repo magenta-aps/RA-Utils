@@ -76,7 +76,7 @@ def ensure_single_run(
     lock_name: str,
     *args: typing.Any,
     **kwargs: typing.Any,
-) -> typing.Any:
+) -> typing.Optional[typing.Any]:
     """Wrapper function that ensures that no more than a single instance of a function
     is running at any given time. Checks if a lock for the function already exists, and
     is taken, or not. If a lock exists it raises a StopIteration exception. If no lock
