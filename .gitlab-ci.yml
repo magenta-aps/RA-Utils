@@ -30,7 +30,6 @@ include:
     file:
       - '/gitlab-ci-templates/common/conventional-commits.v1.yml'
       - '/gitlab-ci-templates/python/pypi.v1.yml'
-    ref: feature/52164_conventional_commits
 
 # ---------------------------------------------------------------------------
 # Templates
