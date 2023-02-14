@@ -49,10 +49,6 @@ headers = ["pydantic", "requests", "types-requests"]
 all = ["Jinja2", "pydantic", "requests", "types-requests", "frozendict", "sentry-sdk",
        "prometheus-client"]
 
-[tool.autopub]
-git-username = "MagentaBot"
-git-email = "info@magenta.dk"
-
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
