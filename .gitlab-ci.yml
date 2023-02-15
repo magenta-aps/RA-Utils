@@ -1,10 +1,23 @@
 ---
-# ---------------------------------------------------------------------------
-# Global
-# ---------------------------------------------------------------------------
+# SPDX-FileCopyrightText: 2022 Magenta ApS
+# SPDX-License-Identifier: MPL-2.0
+
+default:
+  # All jobs are interruptible by default
+  interruptible: true
+
+stages:
+  - sync
+  - lint
+  - test
+  # - coverage
+  - release
+
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   PRE_COMMIT_HOME: "$CI_PROJECT_DIR/.cache/pre-commit"
+  POETRY_VERSION: 1.3.2
+  PRECOMMIT_USE_POETRY: "true"
 
 cache:
   key: "${CI_JOB_NAME}"
@@ -13,96 +26,76 @@ cache:
     - .cache/pip
     - .cache/pre-commit
 
-stages:
-  - lint
-  - test
-  - release
-  - deploy
+# Conditions
+#############
+.if-default-branch-refs: &if-default-branch-refs
+  if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
 
+.if-tag: &if-tag
+  if: '$CI_COMMIT_TAG'
+
+.if-merge-request: &if-merge-request
+  if: '$CI_MERGE_REQUEST_IID'
+
+# Workflow
+###########
 workflow:
   rules:
-    - if: '$CI_COMMIT_TAG'
-    - if: '$CI_MERGE_REQUEST_IID'
-    - if: '$CI_COMMIT_BRANCH'
+    - <<: *if-tag
+    - <<: *if-default-branch-refs
+    - <<: *if-merge-request
 
 include:
   - project: 'labs/salt-automation'
     file:
-      - '/gitlab-ci-templates/common/conventional-commits.v1.yml'
-      - '/gitlab-ci-templates/python/pypi.v1.yml'
-
-# ---------------------------------------------------------------------------
-# Templates
-# ---------------------------------------------------------------------------
-.install-deps-template: &install-deps
-  before_script:
-    - pip install poetry
-    - poetry --version
-    - poetry config virtualenvs.in-project true
-    - poetry install -vv --extras all
-    - poetry run pre-commit install
-
-.lint-template: &lint
-  <<: *install-deps
-  image: python:3.10
-  stage: lint
-
-.test-template: &test # Coverage needed too
-  <<: *install-deps
-  needs: []
-  stage: test
-  script: poetry run pytest tests/ --cov --cov-fail-under=100 --hypothesis-show-statistics --hypothesis-profile ci
-
-.deploy-template: &deploy
-  <<: *install-deps
-  image: python:3.8
-  stage: deploy
-  rules:
-    # Matches <version core> from SemVer 2.0.0 BNF grammar. Ex. 2.3.4, but not 2.3.4-rc
-    - if: $CI_COMMIT_TAG =~ /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/
-
-# ---------------------------------------------------------------------------
-# Lint
-# ---------------------------------------------------------------------------
-Lint Project:
-  <<: *lint
-  script:
-    - poetry run pre-commit run --all-files
+      - gitlab-ci-templates/common/no-interrupt.v1.yml
+      - gitlab-ci-templates/common/conventional-commits.v1.yml
+      - gitlab-ci-templates/common/pre-commit.v1.yml
+      - gitlab-ci-templates/common/rules.v1.yml
+      - gitlab-ci-templates/python/pypi-cc.v1.yml
+      - gitlab-ci-templates/python/pytest-meta.v1.yml
 
 Check Docs:
-  <<: *lint
+  image: python:3.10
+  stage: lint
   script:
     - pip install pyyaml more-itertools
     - python tools/check_docs.py
 
-# ---------------------------------------------------------------------------
-# Test
-# ---------------------------------------------------------------------------
+.pytest_extras:
+  extends: .pytest
+  before_script:
+    - !reference [.pytest, before_script]
+    - $POETRY_HOME/bin/poetry install -vv --extras all
+
 Test on Python 3.8:
-  <<: *test
+  extends: .pytest_extras
   image: python:3.8
 
 Test on Python 3.9:
-  <<: *test
+  extends: .pytest_extras
   image: python:3.9
 
 Test on Python 3.10:
-  <<: *test
+  extends: .pytest_extras
   image: python:3.10
 
 # Test on Python 3.11:
-#   <<: *test
+#   extends: .pytest_extras
 #   image: python:3.11
 
 pages:
-  <<: *install-deps
   image: python:3.8
-  stage: deploy
+  stage: release
   needs: []
+  before_script:
+    - pip install poetry
+    - poetry config virtualenvs.in-project true
+    - poetry install -vv --extras all
   script:
     - poetry run mkdocs build --strict --site-dir public
   artifacts:
     paths:
       - public
   rules:
-    - if: '$CI_COMMIT_BRANCH == "development"'
+    - <<: *if-default-branch-refs
