@@ -105,3 +105,33 @@ def test_url_is_conflicts_with_others() -> None:
     # Conflicting information here, url always wins
     with pytest.raises(ValidationError):
         StructuredUrl(url="https://b", scheme="http", host="a")
+
+
+@skip_if_missing
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://example.com",
+        "https://username:password@example.com/mypath#here?now=1",
+        "postgresql://username:password@db/mydb",
+        "postgresql+asyncpg://username:password@db/mydb",
+    ],
+)
+def test_that_urls_are_ok(url: str) -> None:
+    StructuredUrl(url=url)
+
+
+@skip_if_missing
+@pytest.mark.parametrize(
+    "url",
+    [
+        "sqlite+aiosqlite:///:memory:",
+        "sqlite:///db.sqlite3",
+        "sqlite+aiosqlite:///db.sqlite3",
+        "sqlite:////C:/db.sqlite3",
+        "sqlite+aiosqlite:////tmp/db.sqlite3",
+    ],
+)
+def test_that_urls_are_rejected(url: str) -> None:
+    with pytest.raises(ValidationError):
+        StructuredUrl(url=url)
