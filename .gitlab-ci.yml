@@ -64,6 +64,8 @@ Check Docs:
 
 .pytest_extras:
   extends: .pytest
+  variables:
+    HYPOTHESIS_PROFILE: "ci"
   before_script:
     - !reference [.pytest, before_script]
     - $POETRY_HOME/bin/poetry install -vv --extras all
