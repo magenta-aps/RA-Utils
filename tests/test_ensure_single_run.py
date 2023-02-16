@@ -30,19 +30,14 @@ def lock_test(lock_name: str, lock_content: str):
 def compare_reg_content(
     registry: prometheus_client.CollectorRegistry, expected_locked: bool
 ):
-    cmp_str: bytes = (
-        b"# HELP lock_conflict_test_lock Lock conflict, time is from "
-        b"last successful run\n# TYPE lock_conflict_test_lock "
-        b"gauge\nlock_conflict_test_lock 0.0\n"
-    )
-    if expected_locked:
-        cmp_str = (
-            b"# HELP lock_conflict_test_lock Lock conflict, time is from "
-            b"last successful run\n# TYPE lock_conflict_test_lock "
-            b"gauge\nlock_conflict_test_lock 1.0\n"
-        )
+    prom_str = str(prometheus_client.exposition.generate_latest(registry))
 
-    assert prometheus_client.exposition.generate_latest(registry) == cmp_str
+    if expected_locked:
+        assert "mo_return_code 1.0" in prom_str
+    else:
+        assert "mo_return_code 0.0" in prom_str
+
+    assert "HELP mo_end_time" in prom_str
 
 
 class TestEnsureSingleRun(unittest.TestCase):

@@ -52,16 +52,22 @@ def notify_prometheus(lock_file_name: str, lock_conflict: bool) -> None:
     log = structlog.getLogger()
     job_name = f"lock_conflict_{lock_file_name}"
     registry = CollectorRegistry()
-    g = Gauge(
-        name=job_name,
-        documentation="Lock conflict, time is from last successful run",
+
+    g_time = Gauge(
+        name="mo_end_time", documentation="Unixtime for job end time", registry=registry
+    )
+    g_time.set_to_current_time()
+
+    g_ret_code = Gauge(
+        name="mo_return_code",
+        documentation="Return code of job",
         registry=registry,
     )
     if not lock_conflict:
-        g.set_to_current_time()
-        g.set(0)
+        g_ret_code.set(0)
     else:
-        g.inc(1)
+        g_ret_code.inc(1)
+
     try:
         prometheus_client.exposition.push_to_gateway(
             gateway="localhost:9091", job=job_name, registry=registry
