@@ -28,14 +28,13 @@ def _is_lock_taken(lock_name: str) -> bool:
     try:
         # This is a special case, this will only happen if the lock is already taken,
         # or something has crashed hard and the lock has been manually reset, wrong
-        lock = open(lock_name, "r")
-        lock_content = lock.read()
-        lock.close()
-        # if there is no content in the lock file, or the content is all
-        # whitespaces the lock isn't taken
-        locked: bool = not ((not lock_content) or lock_content.isspace())
+        with open(lock_name, "r") as lock:
+            lock_content = lock.read()
 
-        print(locked)
+            # if there is no content in the lock file, or the content is all
+            # whitespaces the lock isn't taken
+            locked: bool = not ((not lock_content) or lock_content.isspace())
+
     except FileNotFoundError:
         # This is the normal case
         return False
@@ -69,7 +68,7 @@ def notify_prometheus(lock_file_name: str, lock_conflict: bool) -> None:
         g_ret_code.inc(1)
 
     try:
-        prometheus_client.exposition.push_to_gateway(
+        prometheus_client.exposition.pushadd_to_gateway(
             gateway="localhost:9091", job=job_name, registry=registry
         )
     except urllib.error.URLError as ue:

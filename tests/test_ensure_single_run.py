@@ -67,7 +67,7 @@ class TestEnsureSingleRun(unittest.TestCase):
             is expected
         )
 
-    @patch("prometheus_client.exposition.push_to_gateway")
+    @patch("prometheus_client.exposition.pushadd_to_gateway")
     def test_single_run(self, mock_gateway: MagicMock):
         retval = esr.ensure_single_run(
             func=self.input_func, lock_name=self.lock_name_global
@@ -77,7 +77,7 @@ class TestEnsureSingleRun(unittest.TestCase):
         reg: prometheus_client.CollectorRegistry = mock_gateway.call_args[1]["registry"]
         compare_reg_content(registry=reg, expected_locked=False)
 
-    @patch("prometheus_client.exposition.push_to_gateway")
+    @patch("prometheus_client.exposition.pushadd_to_gateway")
     def test_multi_run(self, mock_gateway: MagicMock):
         # open( , "x") creates a file, and throws an error if the file already exist.
         # If the file already exists something has gone wrong somewhere as the tests,
@@ -100,7 +100,7 @@ class TestEnsureSingleRun(unittest.TestCase):
 
     # Test that if the input function fails we get the right error back and the
     # lock is cleared
-    @patch("prometheus_client.exposition.push_to_gateway")
+    @patch("prometheus_client.exposition.pushadd_to_gateway")
     def test_error_run(self, mock_gateway: MagicMock):
         with self.assertRaises(expected_exception=NotImplementedError):
             esr.ensure_single_run(
