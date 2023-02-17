@@ -22,7 +22,7 @@ repos:
           - types-frozendict
           - types-requests
           - types-PyYAML
-        args: [--python-version=3.10]
+        args: [--python-version=3.11]
 
   - repo: https://github.com/fsfe/reuse-tool
     rev: v1.1.2
