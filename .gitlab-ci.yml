@@ -99,5 +99,3 @@ pages:
   artifacts:
     paths:
       - public
-  rules:
-    - <<: *if-default-branch-refs
