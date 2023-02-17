@@ -60,7 +60,7 @@ def test_add(a: int, b: int):
 
     result4 = call_asyncadder(a, b)
     assert isawaitable(result4) is True
-    assert run(result4) == expected
+    assert run(result4) == expected  # type: ignore
 
 
 class AsyncNoExitContext:

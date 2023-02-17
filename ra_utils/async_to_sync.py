@@ -35,6 +35,6 @@ def async_to_sync(
 
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Optional[Any]) -> CallableReturnType:
-        return asyncio.run(func(*args, **kwargs))
+        return asyncio.run(func(*args, **kwargs))  # type: ignore
 
     return wrapper

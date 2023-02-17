@@ -43,7 +43,7 @@ dict_entries = filter(lambda entry: isinstance(entry, dict), nav)
 dict_entries = filter(lambda entry: entry.keys() == {"Modules"}, dict_entries)
 modules = one(dict_entries)["Modules"]
 modules = flatten(map(lambda entry: entry.values(), modules))  # type: ignore
-modules = set(map(lambda entry: entry[len("modules/") :], modules))
+modules = set(map(lambda entry: entry[len("modules/") :], modules))  # type: ignore
 # At this point modules is a set of filenames in the TOC
 
 mismatch = modules.symmetric_difference(actual_markdown_files)
