@@ -294,7 +294,7 @@ mkdocs = ">=1.1"
 
 [[package]]
 name = "mkdocs-material"
-version = "9.0.12"
+version = "9.0.13"
 description = "Documentation that simply works"
 category = "dev"
 optional = false
@@ -784,7 +784,7 @@ sentry = ["sentry-sdk", "pydantic"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "1cbfb4b783f3db423e5a7733e32d04214348d0923de0438290054bf551061b86"
+content-hash = "412e5483f883afd2be0324c731a410d0fcbf9004fd776c6ddb2aaec40c18e848"
 
 [metadata.files]
 attrs = [
@@ -986,8 +986,8 @@ mkdocs-autorefs = [
     {file = "mkdocs_autorefs-0.4.1-py3-none-any.whl", hash = "sha256:a2248a9501b29dc0cc8ba4c09f4f47ff121945f6ce33d760f145d6f89d313f5b"},
 ]
 mkdocs-material = [
-    {file = "mkdocs_material-9.0.12-py3-none-any.whl", hash = "sha256:ff4233e4f4da0c879db0dbcb532a690a3f86f5a66a0cfcce99a124e82a462afb"},
-    {file = "mkdocs_material-9.0.12.tar.gz", hash = "sha256:4da07b1390c6b78844f1566d723dd045572e645f31b108a1b5062fa7d11aa241"},
+    {file = "mkdocs_material-9.0.13-py3-none-any.whl", hash = "sha256:06e51eba6a090de070a3489890cf1e491d52c04c6ff2b06dd4586c6cdd974a3f"},
+    {file = "mkdocs_material-9.0.13.tar.gz", hash = "sha256:a62696610899d01df091b4d5ad23f9811f878a1f34307d7cea677baf4854c84f"},
 ]
 mkdocs-material-extensions = [
     {file = "mkdocs_material_extensions-1.1.1-py3-none-any.whl", hash = "sha256:e41d9f38e4798b6617ad98ca8f7f1157b1e4385ac1459ca1e4ea219b556df945"},
