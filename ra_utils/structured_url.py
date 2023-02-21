@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2022 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
 """Pydantic StructuredUrl model."""
+import json
 from typing import Any
 from typing import Optional
 from urllib.parse import parse_qsl
@@ -60,6 +61,11 @@ class StructuredUrl(BaseModel):
         if "host" not in values:
             raise ValueError("host is required")
 
+        # Ensure that query is a dictionary or None
+        query = values.get("query", {})
+        if isinstance(query, str):
+            query = json.loads(query)
+
         uri_string = AnyUrl.build(
             scheme=values.get("scheme"),
             user=values.get("user"),
@@ -67,7 +73,7 @@ class StructuredUrl(BaseModel):
             host=values.get("host"),
             port=parse_obj_as(Optional[str], values.get("port")),
             path=values.get("path"),
-            query=urlencode(values.get("query", {})),
+            query=urlencode(query),
             fragment=values.get("fragment"),
         )
         values["url"] = parse_obj_as(AnyUrl, uri_string)
