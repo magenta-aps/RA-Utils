@@ -1,11 +1,15 @@
 # SPDX-FileCopyrightText: 2021 Magenta ApS <https://magenta.dk>
 # SPDX-License-Identifier: MPL-2.0
+from typing import Any
 from typing import Callable
 
 import pytest
+from _pytest.monkeypatch import MonkeyPatch
 
 try:
     from pydantic import ValidationError
+    from pydantic import BaseSettings
+    from pydantic import Field
 
     from ra_utils.structured_url import StructuredUrl
 
@@ -14,6 +18,10 @@ try:
 
 except:  # pragma: no cover  # noqa: E722
     StructuredUrl = object  # type: ignore
+    BaseSettings = object  # type: ignore
+
+    def Field(*args: Any, **kwargs: Any) -> None:
+        return None
 
     skip_if_missing = pytest.mark.skipif(True, reason="pydantic not installed")
 
@@ -135,3 +143,54 @@ def test_that_urls_are_ok(url: str) -> None:
 def test_that_urls_are_rejected(url: str) -> None:
     with pytest.raises(ValidationError):
         StructuredUrl(url=url)
+
+
+class Settings(BaseSettings):
+    class Config:
+        env_nested_delimiter = "__"
+
+    database: StructuredUrl = Field(default_factory=StructuredUrl)
+
+
+@skip_if_missing
+def test_settings_missing_scheme():
+    with pytest.raises(ValidationError) as exc_info:
+        Settings()
+    assert "scheme is required" in str(exc_info.value)
+
+
+@skip_if_missing
+def test_settings_bad_scheme(monkeypatch: MonkeyPatch):
+    monkeypatch.setenv("DATABASE__SCHEME", "postgresql://")
+    monkeypatch.setenv("DATABASE__HOST", "database.example.org")
+    with pytest.raises(ValidationError) as exc_info:
+        Settings()
+    assert (
+        "URL invalid, extra characters found after valid URL: '://database.example.org'"
+        in str(exc_info.value)
+    )
+
+
+@skip_if_missing
+def test_settings_bad_path(monkeypatch: MonkeyPatch):
+    monkeypatch.setenv("DATABASE__SCHEME", "postgresql")
+    monkeypatch.setenv("DATABASE__HOST", "database.example.org")
+    monkeypatch.setenv("DATABASE__PORT", "5432")
+    monkeypatch.setenv("DATABASE__PATH", "mox")
+    with pytest.raises(ValidationError) as exc_info:
+        Settings()
+    assert "URL invalid, extra characters found after valid URL: 'mox'" in str(
+        exc_info.value
+    )
+
+
+@skip_if_missing
+def test_settings(monkeypatch: MonkeyPatch):
+    monkeypatch.setenv("DATABASE__SCHEME", "postgresql")
+    monkeypatch.setenv("DATABASE__USER", "AzureDiamond")
+    monkeypatch.setenv("DATABASE__PASSWORD", "hunter2")
+    monkeypatch.setenv("DATABASE__HOST", "database.example.org")
+    monkeypatch.setenv("DATABASE__PORT", "5432")
+    monkeypatch.setenv("DATABASE__PATH", "/mox")
+    monkeypatch.setenv("DATABASE__QUERY", '{"sslmode": "require"}')
+    Settings()
