@@ -74,6 +74,17 @@ def test_can_provide_url_indirectly() -> None:
 
 
 @skip_if_missing
+def test_that_passwords_are_url_encoded() -> None:
+    structured_url = StructuredUrl(
+        scheme="https",
+        user="user@domain.com",
+        password="p@ssword",
+        host="example.com",
+    )
+    assert structured_url.url == "https://user%40domain.com:p%40ssword@example.com"
+
+
+@skip_if_missing
 def test_no_args_not_ok() -> None:
     with pytest.raises(ValidationError):
         StructuredUrl()

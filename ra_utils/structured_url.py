@@ -5,6 +5,7 @@ import json
 from typing import Any
 from typing import Optional
 from urllib.parse import parse_qsl
+from urllib.parse import quote
 from urllib.parse import urlencode
 
 try:
@@ -66,10 +67,19 @@ class StructuredUrl(BaseModel):
         if isinstance(query, str):
             query = json.loads(query)
 
+        # According to RFC3986 section 3.2.1
+        # Basic-auth username and password should be URL encoded
+        user = values.get("user")
+        if user:
+            user = quote(user)
+        password = values.get("password")
+        if password:
+            password = quote(password)
+
         uri_string = AnyUrl.build(
             scheme=values.get("scheme"),
-            user=values.get("user"),
-            password=values.get("password"),
+            user=user,
+            password=password,
             host=values.get("host"),
             port=parse_obj_as(Optional[str], values.get("port")),
             path=values.get("path"),
