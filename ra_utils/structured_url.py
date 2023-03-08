@@ -53,7 +53,17 @@ class StructuredUrl(BaseModel):
         """
         # If 'url' is set, noop.
         if values.get("url"):
-            if len(values) != 1:
+            structured_field_keys = (
+                "scheme",
+                "user",
+                "password",
+                "host",
+                "port",
+                "path",
+                "query",
+                "fragment",
+            )
+            if not values.keys().isdisjoint(structured_field_keys):
                 raise ValueError("cannot provide both url and structured fields")
             return values
 
