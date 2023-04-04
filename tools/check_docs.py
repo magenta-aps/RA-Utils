@@ -25,6 +25,7 @@ markdown_directory = "docs/modules"
 
 python_files = files_in_folder(python_directory)
 python_files.remove("__init__.py")
+python_files.remove("py.typed")
 
 # We want a markdown file for each python file
 wanted_markdown_files = set(map(lambda file: file.replace(".py", ".md"), python_files))
