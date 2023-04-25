@@ -106,7 +106,7 @@ class JobSettings(BaseSettings):
     auth_realm: str = "mo"
     auth_server: str = "http://keycloak:8080/auth"
 
-    log_level: LogLevel = LogLevel.ERROR
+    log_level: LogLevel = LogLevel.DEBUG
     log_format: str = (
         "%(levelname)s %(asctime)s %(filename)s:%(lineno)d:%(name)s: %(message)s"
     )
