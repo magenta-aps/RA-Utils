@@ -34,13 +34,13 @@ def _mock_settings(**kwargs: Any) -> ContextManager:
 def test_log_level_uses_default(mock_env):
     with _mock_settings(return_value={}):
         settings: _ExampleSettings = _ExampleSettings()
-        assert settings.log_level == LogLevel.ERROR.value  # the default is ERROR
+        assert settings.log_level == LogLevel.DEBUG.value  # the default is DEBUG
 
 
 def test_json_settings_source_handles_file_not_found(mock_env):
     with _mock_settings(side_effect=FileNotFoundError):
         settings: _ExampleSettings = _ExampleSettings()
-        assert settings.log_level == LogLevel.ERROR.value  # the default is ERROR
+        assert settings.log_level == LogLevel.DEBUG.value  # the default is DEBUG
 
 
 def test_log_level_uses_settings_json_value(mock_env):
@@ -60,6 +60,7 @@ def _make_log_output(logger):
     with _mock_settings(return_value={}):
         settings: _ExampleSettings = _ExampleSettings()
         settings.start_logging_based_on_settings()
+        logger.debug("debug")
         logger.info("info")
         logger.error("error")
 
@@ -69,9 +70,10 @@ def test_python_logging_respects_log_level(caplog, mock_env):
     logger = logging.getLogger(__name__)
     # Act
     _make_log_output(logger)
-    # Assert: only ERROR log lines are present, since the default log level is ERROR
+    # Assert: all log lines and above are present, since the default log level is DEBUG
     assert "error" in caplog.text
-    assert "info" not in caplog.text
+    assert "info" in caplog.text
+    assert "debug" in caplog.text
 
 
 @pytest.mark.parametrize("isatty", [True, False])
@@ -82,7 +84,8 @@ def test_structlog_logging_respects_log_level(capsys, mocker, mock_env, isatty):
     stderr_mock.isatty.return_value = isatty
     # Act
     _make_log_output(logger)
-    # Assert: only ERROR log lines are present, since the default log level is ERROR
+    # Assert: all log lines and above are present, since the default log level is DEBUG
     stdout = capsys.readouterr().out
     assert "error" in stdout
-    assert "info" not in stdout
+    assert "info" in stdout
+    assert "debug" in stdout
