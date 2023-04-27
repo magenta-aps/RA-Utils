@@ -321,7 +321,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "mkdocstrings"
-version = "0.20.0"
+version = "0.21.2"
 description = "Automatic documentation from sources, for MkDocs."
 category = "dev"
 optional = false
@@ -334,6 +334,7 @@ MarkupSafe = ">=1.1"
 mkdocs = ">=1.2"
 mkdocs-autorefs = ">=0.3.1"
 pymdown-extensions = ">=6.3"
+typing-extensions = {version = ">=4.1", markers = "python_version < \"3.10\""}
 
 [package.extras]
 crystal = ["mkdocstrings-crystal (>=0.3.4)"]
@@ -718,7 +719,7 @@ name = "typing-extensions"
 version = "4.4.0"
 description = "Backported and Experimental Type Hints for Python 3.7+"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7"
 
 [[package]]
@@ -786,7 +787,7 @@ sentry = ["sentry-sdk", "pydantic"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "c9873ea908d215c13daa2591be9c24aff596aecea584f0390564dd663094e6e2"
+content-hash = "713b71d2fcddc3f8f47f32719de6d2cfa606cb747e81bc9c046c1d634f33cc25"
 
 [metadata.files]
 attrs = [
@@ -1015,8 +1016,8 @@ mkdocs-material-extensions = [
     {file = "mkdocs_material_extensions-1.1.1.tar.gz", hash = "sha256:9c003da71e2cc2493d910237448c672e00cefc800d3d6ae93d2fc69979e3bd93"},
 ]
 mkdocstrings = [
-    {file = "mkdocstrings-0.20.0-py3-none-any.whl", hash = "sha256:f17fc2c4f760ec302b069075ef9e31045aa6372ca91d2f35ded3adba8e25a472"},
-    {file = "mkdocstrings-0.20.0.tar.gz", hash = "sha256:c757f4f646d4f939491d6bc9256bfe33e36c5f8026392f49eaa351d241c838e5"},
+    {file = "mkdocstrings-0.21.2-py3-none-any.whl", hash = "sha256:949ef8da92df9d692ca07be50616459a6b536083a25520fd54b00e8814ce019b"},
+    {file = "mkdocstrings-0.21.2.tar.gz", hash = "sha256:304e56a2e90595708a38a13a278e538a67ad82052dd5c8b71f77a604a4f3d911"},
 ]
 mkdocstrings-python = [
     {file = "mkdocstrings-python-0.8.3.tar.gz", hash = "sha256:9ae473f6dc599339b09eee17e4d2b05d6ac0ec29860f3fc9b7512d940fc61adf"},
