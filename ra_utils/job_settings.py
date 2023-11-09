@@ -12,15 +12,14 @@ from typing import Tuple
 
 try:
     import structlog
+    from structlog.processors import CallsiteParameter
     from pydantic import BaseSettings
     from pydantic import Extra
     from pydantic.env_settings import SettingsSourceCallable
 except ImportError as err:  # pragma: no cover
     raise ImportError(f"{err.name} not found - {__name__} not imported")
 
-
 from .load_settings import load_settings
-
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +79,18 @@ class LogLevel(Enum):
     WARNING = auto()
     ERROR = auto()
     CRITICAL = auto()
+
+
+def _dont_log_graphql_responses(_: Any, __: str, event_dict: dict) -> dict:
+    """Drop logs from `BaseHTTPXTransport._decode_response` (in
+    `raclients.graph.transport`), which logs *all* GraphQL responses at DEBUG level.
+    (https://git.magenta.dk/rammearkitektur/ra-clients/-/blob/master/raclients/graph/transport.py#L117)
+    """
+    module: str | None = event_dict.get("module")
+    func_name: str | None = event_dict.get("func_name")
+    if module == "transport" and func_name == "_decode_response":
+        raise structlog.DropEvent
+    return event_dict
 
 
 class JobSettings(BaseSettings):
@@ -165,7 +176,12 @@ class JobSettings(BaseSettings):
     def _configure_structlog_logging(self) -> None:
         # Based on: https://www.structlog.org/en/stable/logging-best-practices.html
 
-        shared_processors: List[Any] = []
+        shared_processors: List[Any] = [
+            structlog.processors.CallsiteParameterAdder(
+                [CallsiteParameter.MODULE, CallsiteParameter.FUNC_NAME],
+            ),
+            _dont_log_graphql_responses,
+        ]
         if sys.stderr.isatty():
             # Pretty printing when we run in a terminal session.
             # Automatically prints pretty tracebacks when "rich" is installed
